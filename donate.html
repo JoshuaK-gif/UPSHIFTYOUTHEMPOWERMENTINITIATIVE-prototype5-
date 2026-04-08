@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upshift Youth Empowerment Initiative – Donate</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="donate.css">
+<script src="donate.js" defer></script>
+
+</head>
+<body>
+<div id="progress-bar"></div>
+
+    <!-- ── NAVBAR ─────────────────────────────────────────── -->
+<div>
+  <div id="site-header">
+    <nav class="navbar" id="navbar">
+      <div class="navbar-left">
+        <a class="logo" href="#top.html">
+          <img src="USYEI.PNG" alt="Upshift Youth Empowerment Initiative logo">
+        </a>
+        <a class="org-name" href="#top.html">
+          USYEI
+          <p>Upshift Youth Empowerment Initiative</p>
+        </a>
+      </div>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      
+
+      <ul class="navlinks">
+        <li><a href="index.html"    class="navlink">Home</a></li>
+        <li><a href="About us.html" class="navlink">About Us</a></li>
+        <li><a href="programer.html" class="navlink">Programs</a></li>
+        <li><a href="contact (2).html"  class="navlink">Contact</a></li>
+        <li><a href="donate.html" class="navlink">Support</a></li>
+      </ul>
+    </nav>
+
+    <nav class="mobile-nav" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="About us.html">About Us</a>
+      <a href="programer.html">Programs</a>
+      <a href="contact (2).html">Contact</a>
+      <a href="donate.html">Support</a>
+    </nav>
+  </div>
+</div>
+
+  <div class="form-col">
+    <div class="donate-card">
+      <p class="card-title">Upshift Youth Empowerment Initiative-(USYEI)</p>
+      <p class="card-sub">Donate here to support the Upshift Youth Empowerment Initiative.</p>
+      <p class="card-thanks">Thank you for your support!</p>
+
+      <!-- Frequency -->
+      <span class="form-label">Frequency</span>
+      <div class="toggle-group" id="freqGroup">
+        <button class="toggle-btn active" onclick="setActive('freqGroup', this)">One Time</button>
+        <button class="toggle-btn" onclick="setActive('freqGroup', this)">Monthly</button>
+      </div>
+
+      <!-- Amount -->
+      <span class="form-label">Amount <span class="usd">(USD)</span></span>
+      <div class="amount-grid" id="amountGroup">
+        <button class="amount-btn active" onclick="selectAmount(this, 25)">$25</button>
+        <button class="amount-btn" onclick="selectAmount(this, 50)">$50</button>
+        <button class="amount-btn" onclick="selectAmount(this, 100)">$100</button>
+      </div>
+      <button class="other-btn" id="otherBtn" onclick="toggleOther()">$Other</button>
+      <div class="other-input-wrap" id="otherWrap" style="display:none;">
+        <span class="prefix">$</span>
+        <input type="number" class="other-input" id="otherInput" placeholder="Enter amount" min="1" oninput="onOtherInput()">
+      </div>
+
+      <!-- Donor type -->
+      <span class="form-label">I am donating as</span>
+      <div class="toggle-group" id="donorGroup">
+        <button class="toggle-btn active" onclick="setActive('donorGroup', this)">Individual</button>
+        <button class="toggle-btn" onclick="setActive('donorGroup', this)">Company</button>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Payment Method -->
+      <span class="form-label">Payment Method</span>
+      <div class="pm-grid">
+
+        <!-- Visa -
+        <div class="pm-tile active" onclick="selectPayment(this, 'visa')">
+          <div class="pm-logo">
+            <svg width="60" height="28" viewBox="0 0 60 28" xmlns="http://www.w3.org/2000/svg">
+              <rect width="60" height="28" rx="4" fill="#1A1F71"/>
+              <text x="50%" y="20" text-anchor="middle" font-size="15" font-weight="800"
+                font-family="Arial,sans-serif" fill="#fff" letter-spacing="1">VISA</text>
+            </svg>
+          </div>
+          <span class="pm-name">Visa Card</span>
+        </div>
+
+        <!-- Mastercard ----
+        <div class="pm-tile" onclick="selectPayment(this, 'mastercard')">
+          <div class="pm-logo">
+            <svg width="56" height="34" viewBox="0 0 58 34" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="21" cy="17" r="13" fill="#EB001B"/>
+              <circle cx="37" cy="17" r="13" fill="#F79E1B"/>
+              <path d="M29 6.8a13 13 0 0 1 0 20.4A13 13 0 0 1 29 6.8z" fill="#FF5F00"/>
+            </svg>
+          </div>
+          <span class="pm-name">Mastercard</span>
+        </div>--->
+
+        <!-- Bank Transfer -->
+        <div class="pm-tile" onclick="selectPayment(this, 'bank')">
+          <div class="pm-logo">
+            <svg width="38" height="34" viewBox="0 0 38 34" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3"  y="14" width="32" height="3"  rx="1" fill="#444"/>
+              <rect x="5"  y="17" width="4"  height="10" rx="1" fill="#444"/>
+              <rect x="12" y="17" width="4"  height="10" rx="1" fill="#444"/>
+              <rect x="19" y="17" width="4"  height="10" rx="1" fill="#444"/>
+              <rect x="26" y="17" width="4"  height="10" rx="1" fill="#444"/>
+              <rect x="2"  y="27" width="34" height="3"  rx="1" fill="#444"/>
+              <polygon points="19,2 36,14 2,14" fill="#444"/>
+            </svg>
+          </div>
+          <span class="pm-name">Bank Transfer</span>
+        </div>
+
+        <!-- GoFundMe -->
+        <div class="pm-tile" onclick="selectPayment(this, 'gofundme')">
+          <div class="pm-logo">
+            <div class="gfm-logo">
+              <span style="color:#fff;font-size:13px;">♥</span>
+              <span>GoFundMe</span>
+            </div>
+          </div>
+          <span class="pm-name">GoFundMe</span>
+        </div>
+
+      </div>
+
+      <!-- Visa Panel --
+      <div class="panel active" id="panel-visa">
+        <div class="field-wrap">
+          <input class="field-input" type="text" placeholder="Cardholder name">
+        </div>
+        <div class="field-wrap">
+          <input class="field-input" type="text" placeholder="Card number" maxlength="19" oninput="formatCard(this)">
+          <span class="field-icon">
+            <svg width="22" height="14" viewBox="0 0 60 28" xmlns="http://www.w3.org/2000/svg">
+              <rect width="60" height="28" rx="4" fill="#1A1F71"/>
+              <text x="50%" y="20" text-anchor="middle" font-size="14" font-weight="800" font-family="Arial" fill="#fff">VISA</text>
+            </svg>
+          </span>
+        </div>
+        <div class="card-row">
+          <input class="field-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+          <div class="field-wrap">
+            <input class="field-input" type="text" placeholder="CVV" maxlength="4">
+            <span class="field-icon"></span>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Mastercard Panel 
+      <div class="panel" id="panel-mastercard">
+        <div class="field-wrap">
+          <input class="field-input" type="text" placeholder="Cardholder name">
+        </div>
+        <div class="field-wrap">
+          <input class="field-input" type="text" placeholder="Card number" maxlength="19" oninput="formatCard(this)">
+          <span class="field-icon">
+            <svg width="22" height="14" viewBox="0 0 58 34" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="21" cy="17" r="13" fill="#EB001B"/>
+              <circle cx="37" cy="17" r="13" fill="#F79E1B"/>
+              <path d="M29 6.8a13 13 0 0 1 0 20.4A13 13 0 0 1 29 6.8z" fill="#FF5F00"/>
+            </svg>
+          </span>
+        </div>
+        <div class="card-row">
+          <input class="field-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)">
+          <div class="field-wrap">
+            <input class="field-input" type="text" placeholder="CVV" maxlength="4">
+            <span class="field-icon"></span>
+          </div>
+        </div>
+      </div>-->
+
+      <!-- Bank Transfer Panel -->
+      <div class="panel" id="panel-bank">
+        <div class="info-panel">
+          <table class="bank-table">
+            <tr><td>Bank</td><td>ABSA Bank</td></tr>
+            <tr><td>Account Name</td><td>Upshift Youth Empowerment Initiative</td></tr>
+            <tr><td>Account No.</td><td>6009841642</td></tr>
+            <tr><td>Swift Code</td><td>BARCUGKX</td></tr>
+            <tr><td>Branch</td><td>Kampala Main</td></tr>
+          </table>
+          <p class="bank-note">After transferring, please email your receipt to
+            <a href="mailto:upshiftyouth@gmail.com">upshiftyouth@gmail.com</a>
+            so we can confirm your donation.
+          </p>
+        </div>
+      </div>
+
+      <!-- GoFundMe Panel -->
+      <div class="panel" id="panel-gofundme">
+        <div class="gfm-panel">
+          <p>You will be taken to our GoFundMe campaign page where you can donate securely. GoFundMe accepts all major cards and bank transfers.</p>
+          <button class="gfm-btn" onclick="window.open('https://gofund.me/8c1d023a3','_blank')">♥ &nbsp;Donate on GoFundMe →</button>
+        </div>
+      </div>
+
+      <!-- Dedication 
+      <label class="checkbox-row">
+        <input type="checkbox" id="dedicateCheck"> I would like to dedicate this gift.>
+      </label>
+
+      -- Processing fee --
+      <div class="processing-row">
+        <input type="checkbox" id="processingCheck" checked>
+        <label for="processingCheck">Add <strong>$0.87</strong> to help cover the processing fees</label>
+      </div>-->
+
+      <button class="donate-btn" id="donateBtn" onclick="handleDonate()">Donate</button>
+      <p class="secure-note"> Secure &amp; encrypted payment</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS 
+<section class="testimonials-section">
+  <div class="testimonials-inner">
+    <p class="section-label">Stories</p>
+    <h2>Words from our community</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">My daughter used to struggle with confidence. After just three months in the program, she won a regional art competition. Art gave her a voice she never knew she had.</p>
+        <div class="testi-author">
+          <div class="testi-avatar av-orange">MK</div>
+          <div class="testi-author-info"><strong>Maama Patricia</strong><span>Parent, wampala</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">I never imagined art could transform a school. Our students are more engaged, more expressive, and proud of who they are. This program is life-changing.</p>
+        <div class="testi-author">
+          <div class="testi-avatar av-teal">NR</div>
+          <div class="testi-author-info"><strong>Nsabawulira Reachel</strong><span>Participant(USYEI), Wampala</span></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Donating monthly is the easiest decision I make. Knowing a real child is learning, creating, and thriving because of a small contribution — it means everything.</p>
+        <div class="testi-author">
+          <div class="testi-avatar av-pink">MK</div>
+          <div class="testi-author-info"><strong>Maama Kalidi</strong><span>Monthly Donor</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+══ -->
+</body>
+</html>

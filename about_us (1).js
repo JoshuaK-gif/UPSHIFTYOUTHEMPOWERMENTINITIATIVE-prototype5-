@@ -3,11 +3,7 @@
       const total = document.body.scrollHeight - window.innerHeight;
       bar.style.width = (window.scrollY / total * 100) + '%';
     });
-  
-  
-
-  
-  const navbar = document.getElementById('navbar');
+    const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('shrink', window.scrollY > 60);
     }, { passive: true });
