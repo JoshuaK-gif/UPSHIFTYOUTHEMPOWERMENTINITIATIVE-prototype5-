@@ -397,7 +397,12 @@ a { text-decoration: none; color: inherit; }
       position: fixed; bottom: 64px; left: 50%;
       transform: translateX(-50%); z-index: 11;
       display: flex; gap: 8px; pointer-events: auto;
+      max-width: calc(100vw - 32px);
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; flex-wrap: nowrap;
+      padding: 4px 2px;
     }
+    #filter-bar::-webkit-scrollbar { display: none; }
     .filter-btn {
       font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
       text-transform: uppercase; padding: 6px 14px; background: transparent;
@@ -425,15 +430,50 @@ a { text-decoration: none; color: inherit; }
     #overlay-img {
       display: block; max-width: 100%; max-height: calc(100vh - 120px);
       object-fit: contain; box-shadow: 0 50px 120px rgba(0,0,0,.6);
+      border-radius: 4px;
+    }
+    /* Small image preview shown ONLY in the description panel (always visible on mobile,
+       hidden on desktop where the large image column already shows it) */
+    #ov-img-preview {
+      display: none;
+      width: 100%; max-height: 52vw; object-fit: cover;
+      border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      flex-shrink: 0;
     }
     #overlay-text {
-      color: var(--paper); display: flex; flex-direction: column; gap: 22px;
+      color: var(--paper); display: flex; flex-direction: column; gap: 18px;
       max-height: calc(100vh - 120px); overflow-y: auto;
     }
+    .ov-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .ov-eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: .5; }
+    .ov-counter { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; opacity: .4; white-space: nowrap; }
     .ov-title { font-family: var(--font-display); font-size: clamp(26px, 2.4vw, 38px); font-weight: 300; line-height: 1.18; }
     .ov-desc { font-family: var(--font-display); font-size: 17px; line-height: 1.72; color: rgba(247,244,239,.8); }
-    .ov-meta { margin-top: 6px; padding-top: 18px; border-top: 1px solid rgba(247,244,239,.12); display: grid; grid-template-columns: 100px 1fr; row-gap: 8px; font-family: var(--font-mono); font-size: 11px; }
+    .ov-meta {
+      margin-top: 4px; padding-top: 16px; border-top: 1px solid rgba(247,244,239,.12);
+      display: grid; grid-template-columns: 100px 1fr; row-gap: 8px;
+      font-family: var(--font-mono); font-size: 11px; color: rgba(247,244,239,.7);
+    }
+    .ov-meta-label { opacity: .45; text-transform: uppercase; letter-spacing: .08em; }
+    .ov-actions {
+      display: flex; align-items: center; gap: 10px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .ov-nav-btn {
+      background: transparent; color: var(--paper);
+      border: 1px solid rgba(247,244,239,.25);
+      padding: 9px 18px; font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+      transition: background .2s, border-color .2s; letter-spacing: .08em;
+    }
+    .ov-nav-btn:hover { background: rgba(247,244,239,.1); border-color: rgba(247,244,239,.5); }
+    #ov-close {
+      background: transparent; color: var(--paper);
+      border: 1px solid rgba(247,244,239,.3);
+      padding: 9px 22px; font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+      transition: background .2s;
+    }
+    #ov-close:hover { background: rgba(247,244,239,.1); }
 
     #close-btn {
       position: fixed; top: 22px; right: 32px; z-index: 110;
@@ -442,11 +482,25 @@ a { text-decoration: none; color: inherit; }
       padding: 8px 10px; opacity: .55; transition: opacity .2s; display: none;
     }
     #close-btn.visible { display: block; }
-    #ov-close {
-      align-self: flex-start; margin-top: 14px; background: transparent;
-      color: var(--paper); border: 1px solid rgba(247,244,239,.3);
-      padding: 9px 22px; font-family: var(--font-mono); font-size: 11px;
-      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+    #close-btn:hover { opacity: 1; }
+
+    /* ── RESPONSIVE OVERLAY ── */
+    @media (max-width: 768px) {
+      #overlay { padding: 0; align-items: flex-end; }
+      #overlay-inner {
+        grid-template-columns: 1fr; gap: 0;
+        max-height: 100dvh; overflow-y: auto;
+        border-radius: 16px 16px 0 0;
+        background: rgba(14,12,10,0.97);
+      }
+      #overlay-img-wrap { display: none; }   /* hide large left image on mobile */
+      #ov-img-preview { display: block; }    /* show compact preview inside text panel */
+      #overlay-text {
+        max-height: none; padding: 20px 22px 32px; gap: 14px;
+      }
+      .ov-title { font-size: clamp(22px, 6vw, 28px); }
+      .ov-desc { font-size: 15px; }
+      #close-btn { top: 14px; right: 16px; }
     }
 
     #loader {
@@ -555,11 +609,20 @@ a { text-decoration: none; color: inherit; }
     <div id="overlay-inner">
       <div id="overlay-img-wrap"><img id="overlay-img" src="" alt="" /></div>
       <div id="overlay-text">
-        <p class="ov-eyebrow" id="ov-eyebrow"></p>
+        <!-- compact image preview — visible on mobile inside the sheet -->
+        <img id="ov-img-preview" src="" alt="" />
+        <div class="ov-header">
+          <p class="ov-eyebrow" id="ov-eyebrow"></p>
+          <p class="ov-counter" id="ov-counter"></p>
+        </div>
         <h2 class="ov-title" id="ov-title"></h2>
         <p class="ov-desc" id="ov-desc"></p>
         <div class="ov-meta" id="ov-meta"></div>
-        <button id="ov-close">Close</button>
+        <div class="ov-actions">
+          <button class="ov-nav-btn" id="ov-prev">← Prev</button>
+          <button id="ov-close">Close</button>
+          <button class="ov-nav-btn" id="ov-next">Next →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -882,23 +945,80 @@ document.addEventListener('click', (e) => {
 
 
       // Overlay functions
+      let currentOverlayIdx = null;
+
       function showOverlay(idx) {
-        const img = IMAGES[idx]; if(!img) return;
-        document.getElementById('overlay-img').src = img.src;
+        const img = IMAGES[idx]; if (!img) return;
+        currentOverlayIdx = idx;
+
+        // Main image (desktop left panel)
+        document.getElementById('overlay-img').src     = img.src;
+        document.getElementById('overlay-img').alt     = img.title;
+        // Compact preview inside description panel (visible on mobile)
+        document.getElementById('ov-img-preview').src  = img.src;
+        document.getElementById('ov-img-preview').alt  = img.title;
+
         document.getElementById('ov-eyebrow').textContent = img.category;
-        document.getElementById('ov-title').textContent = img.title;
-        document.getElementById('ov-desc').textContent = img.description;
+        document.getElementById('ov-counter').textContent = `${idx + 1} / ${IMAGES.length}`;
+        document.getElementById('ov-title').textContent   = img.title;
+        document.getElementById('ov-desc').textContent    = img.description;
+
+        // Fill metadata grid
+        const meta = document.getElementById('ov-meta');
+        meta.innerHTML = `
+          <span class="ov-meta-label">Category</span><span>${img.category}</span>
+          <span class="ov-meta-label">Image</span><span>${idx + 1} of ${IMAGES.length}</span>
+          <span class="ov-meta-label">File</span><span style="opacity:.5;font-size:10px">${img.src}</span>
+        `;
+
+        // Mark selected thumbnail (if panel is open)
+        document.querySelectorAll('.thumb-item').forEach((t, i) => {
+          t.classList.toggle('selected', i === idx);
+        });
+
         document.getElementById('overlay').classList.add('open');
         document.getElementById('close-btn').classList.add('visible');
         gallery.setPaused(true);
       }
+
       function closeOverlay() {
         document.getElementById('overlay').classList.remove('open');
         document.getElementById('close-btn').classList.remove('visible');
+        document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('selected'));
+        currentOverlayIdx = null;
         gallery.setPaused(false);
       }
+
+      function navigateOverlay(dir) {
+        if (currentOverlayIdx === null) return;
+        const next = (currentOverlayIdx + dir + IMAGES.length) % IMAGES.length;
+        showOverlay(next);
+      }
+
       document.getElementById('close-btn').addEventListener('click', closeOverlay);
       document.getElementById('ov-close').addEventListener('click', closeOverlay);
+      document.getElementById('ov-prev').addEventListener('click', () => navigateOverlay(-1));
+      document.getElementById('ov-next').addEventListener('click', () => navigateOverlay(+1));
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!document.getElementById('overlay').classList.contains('open')) return;
+        if (e.key === 'Escape')      closeOverlay();
+        if (e.key === 'ArrowRight')  navigateOverlay(+1);
+        if (e.key === 'ArrowLeft')   navigateOverlay(-1);
+      });
+
+      // Swipe left/right inside overlay to navigate (mobile)
+      let _ovSwipeX = null;
+      document.getElementById('overlay').addEventListener('touchstart', e => {
+        _ovSwipeX = e.touches[0].clientX;
+      }, { passive: true });
+      document.getElementById('overlay').addEventListener('touchend', e => {
+        if (_ovSwipeX === null) return;
+        const dx = e.changedTouches[0].clientX - _ovSwipeX;
+        _ovSwipeX = null;
+        if (Math.abs(dx) > 50) navigateOverlay(dx < 0 ? 1 : -1);
+      }, { passive: true });
 
       // Thumbnail Panel
       const thumbToggle = document.getElementById('thumb-toggle'), thumbPanel = document.getElementById('thumb-panel'), thumbGrid = document.getElementById('thumb-grid');
@@ -910,12 +1030,17 @@ document.addEventListener('click', (e) => {
       function buildThumbGrid() {
         thumbGrid.innerHTML = '';
         IMAGES.forEach((img, i) => {
-          const div = document.createElement('div'); div.className = 'thumb-item';
-          div.innerHTML = `<img src="${img.src}" alt="${img.title}">`;
-          div.onclick = () => { showOverlay(i); thumbToggle.click(); };
+          const div = document.createElement('div');
+          div.className = 'thumb-item' + (i === currentOverlayIdx ? ' selected' : '');
+          div.dataset.idx = i;
+          div.innerHTML = `<img src="${img.src}" alt="${img.title}" title="${img.title}">`;
+          div.onclick = () => {
+            showOverlay(i);
+            thumbToggle.click(); // close panel after selecting
+          };
           thumbGrid.appendChild(div);
         });
-        document.getElementById('panel-subtitle').textContent = IMAGES.length + " items in library";
+        document.getElementById('panel-subtitle').textContent = IMAGES.length + ' items in library';
       }
     });
   </script>
