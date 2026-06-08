@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HopeReach — Vortex Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:   #0e0e0e;
+      --paper: #f7f4ef;
+      --gold:  #c8a96e;
+      --ash:   rgba(14,14,14,0.45);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--paper);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      cursor: crosshair;
+    }
+
+    /* ── Canvas ── */
+    #gl-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    /* ── HUD ── */
+    #hud {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .brand {
+      position: absolute;
+      top: 28px; left: 36px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      pointer-events: auto;
+    }
+
+    .nav-link {
+      position: absolute;
+      top: 30px; right: 36px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      pointer-events: auto;
+      transition: opacity .25s;
+    }
+    .nav-link:hover { opacity: .45; }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink);
+      opacity: .35;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .scroll-hint::before, .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--ink);
+      opacity: .4;
+    }
+
+    /* ── Category filter ── */
+    #filter-bar {
+      position: fixed;
+      bottom: 64px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .filter-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid rgba(14,14,14,.25);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background .2s, border-color .2s, color .2s;
+      border-radius: 2px;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    /* ── Overlay ── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(10, 9, 7, 0.93);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .38s ease;
+    }
+    #overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #overlay-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+      gap: 60px;
+      max-width: 1440px;
+      width: 100%;
+      max-height: 100%;
+      align-items: center;
+      transform: scale(.97);
+      transition: transform .38s ease;
+    }
+    #overlay.open #overlay-inner { transform: scale(1); }
+
+    #overlay-img-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: calc(100vh - 120px);
+    }
+    #overlay-img {
+      display: block;
+      max-width: 100%;
+      max-height: calc(100vh - 120px);
+      object-fit: contain;
+      box-shadow: 0 50px 120px rgba(0,0,0,.6);
+    }
+
+    #overlay-text {
+      color: #f7f4ef;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+    #overlay-text::-webkit-scrollbar { display: none; }
+
+    .ov-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: .5;
+    }
+    .ov-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 2.4vw, 38px);
+      font-weight: 300;
+      line-height: 1.18;
+      letter-spacing: -.01em;
+    }
+    .ov-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      line-height: 1.72;
+      color: rgba(247,244,239,.8);
+      font-weight: 300;
+    }
+    .ov-meta {
+      margin-top: 6px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(247,244,239,.12);
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      row-gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+    }
+    .ov-meta-label { opacity: .45; }
+    .ov-meta-val   { opacity: .75; }
+
+    /* ── Selected badge ── */
+    .sel-indicator {
+      position: fixed;
+      top: 28px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 16px 5px 12px;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+    .sel-indicator.show { opacity: 1; }
+    .sel-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ── Close btn ── */
+    #close-btn {
+      position: fixed;
+      top: 22px; right: 32px;
+      z-index: 60;
+      background: transparent;
+      border: none;
+      color: #f7f4ef;
+      font-size: 30px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 8px 10px;
+      opacity: .55;
+      transition: opacity .2s;
+      display: none;
+    }
+    #close-btn:hover { opacity: 1; }
+    #close-btn.visible { display: block; }
+
+    /* ── Close overlay btn ── */
+    #ov-close {
+      align-self: flex-start;
+      margin-top: 14px;
+      background: transparent;
+      color: #f7f4ef;
+      border: 1px solid rgba(247,244,239,.3);
+      padding: 9px 22px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+      border-radius: 2px;
+    }
+    #ov-close:hover {
+      background: rgba(247,244,239,.1);
+      border-color: rgba(247,244,239,.6);
+    }
+
+    /* ── Touch drag ── */
+    #touch-hint {
+      position: fixed;
+      bottom: 32px; right: 36px;
+      z-index: 11;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      opacity: .25;
+      pointer-events: none;
+    }
+
+    /* ── Loading ── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 18px;
+      transition: opacity .5s ease;
+    }
+    #loader.done { opacity: 0; pointer-events: none; }
+    .loader-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .loader-bar-wrap {
+      width: 160px; height: 1px;
+      background: rgba(14,14,14,.15);
+    }
+    .loader-bar {
+      height: 100%;
+      background: var(--ink);
+      width: 0%;
+      transition: width .3s ease;
+    }
+    .loader-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      opacity: .35;
+    }
+
+    /* ── Thumbnail Panel ── */
+    #thumb-toggle {
+      position: fixed;
+      top: 50%; right: 0;
+      transform: translateY(-50%);
+      z-index: 20;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 14px 8px;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      border-radius: 4px 0 0 4px;
+      transition: right .35s ease, background .2s;
+      pointer-events: auto;
+    }
+    #thumb-toggle:hover { background: #333; }
+    #thumb-toggle.open { right: 280px; }
+
+    #thumb-panel {
+      position: fixed;
+      top: 0; right: -280px;
+      width: 280px; height: 100vh;
+      z-index: 19;
+      background: rgba(14,14,14,0.96);
+      backdrop-filter: blur(12px);
+      display: flex; flex-direction: column;
+      transition: right .35s ease;
+      overflow: hidden;
+    }
+    #thumb-panel.open { right: 0; }
+
+    #thumb-header {
+      padding: 22px 18px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0;
+    }
+    #thumb-header h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px; font-weight: 300;
+      letter-spacing: .1em; color: #f7f4ef;
+      margin-bottom: 4px;
+    }
+    #thumb-header p {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(247,244,239,.4);
+    }
+
+    #thumb-search {
+      margin: 12px 18px;
+      flex-shrink: 0;
+    }
+    #thumb-search input {
+      width: 100%;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      color: #f7f4ef;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 7px 10px;
+      border-radius: 3px;
+      outline: none;
+      letter-spacing: .06em;
+    }
+    #thumb-search input::placeholder { color: rgba(247,244,239,.3); }
+    #thumb-search input:focus { border-color: rgba(247,244,239,.35); }
+
+    #thumb-cats {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      padding: 0 18px 12px;
+      flex-shrink: 0;
+    }
+    .tc-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px; letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(247,244,239,.6);
+      cursor: pointer; border-radius: 2px;
+      transition: .18s;
+    }
+    .tc-btn:hover, .tc-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0e0e0e;
+    }
+
+    #thumb-count {
+      padding: 0 18px 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: .1em;
+      color: rgba(247,244,239,.3);
+      flex-shrink: 0;
+    }
+
+    #thumb-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 18px 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-content: start;
+    }
+    #thumb-grid::-webkit-scrollbar { width: 3px; }
+    #thumb-grid::-webkit-scrollbar-track { background: transparent; }
+    #thumb-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
+
+    .thumb-item {
+      position: relative;
+      cursor: pointer;
+      border-radius: 3px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      border: 2px solid transparent;
+      transition: border-color .18s, transform .18s;
+    }
+    .thumb-item:hover { transform: scale(1.03); border-color: rgba(247,244,239,.3); }
+    .thumb-item.selected { border-color: var(--gold); }
+    .thumb-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .thumb-item .th-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.8));
+      padding: 14px 5px 5px;
+      font-family: 'DM Mono', monospace;
+      font-size: 7px; letter-spacing: .06em;
+      text-transform: uppercase; color: rgba(255,255,255,.8);
+      line-height: 1.3;
+    }
+    .thumb-item .th-cat {
+      display: inline-block;
+      background: var(--gold);
+      color: #0e0e0e;
+      font-size: 6px; letter-spacing: .08em;
+      padding: 1px 4px; border-radius: 1px;
+      margin-bottom: 2px;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="loader">
+  <div class="loader-title">HopeReach</div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+  <div class="loader-sub" id="loader-sub">Loading images…</div>
+</div>
+
+<!-- WebGL Canvas -->
+<canvas id="gl-canvas"></canvas>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="brand">USYEI</div>
+  <a class="nav-link" href="index.html" style="right: 120px;">Home</a>
+  <a class="nav-link" href="About us.html">About Us</a>
+  <div class="scroll-hint">Scroll to explore</div>
+</div>
+
+<!-- Selected badge -->
+<div class="sel-indicator" id="sel-indicator">
+  <span class="sel-dot"></span>
+  <span id="sel-label">Image selected</span>
+</div>
+
+<!-- Category filter -->
+<div id="filter-bar">
+  <button class="filter-btn active" data-cat="All">All</button>
+  <button class="filter-btn" data-cat="Education">Education</button>
+  <button class="filter-btn" data-cat="Healthcare">Healthcare</button>
+  <button class="filter-btn" data-cat="Community">Community</button>
+  <button class="filter-btn" data-cat="Environment">Environment</button>
+  <button class="filter-btn" data-cat="Emergency Relief">Relief</button>
+</div>
+
+<!-- Image detail overlay -->
+<div id="overlay">
+  <div id="overlay-inner">
+    <div id="overlay-img-wrap">
+      <img id="overlay-img" src="" alt="" />
+    </div>
+    <div id="overlay-text">
+      <p class="ov-eyebrow" id="ov-eyebrow"></p>
+      <h2 class="ov-title" id="ov-title"></h2>
+      <p class="ov-desc" id="ov-desc"></p>
+      <div class="ov-meta" id="ov-meta"></div>
+      <button id="ov-close">Close</button>
+    </div>
+  </div>
+</div>
+<button id="close-btn" aria-label="Close">×</button>
+
+<!-- Touch drag hint -->
+<div id="touch-hint">Drag to scroll</div>
+
+<!-- Three.js via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ======================================================
+   DATA
+====================================================== */
+const IMG_DATA = {
+};
+
+const IMAGES = [
+];
+
+/* ======================================================
+   SHADERS
+====================================================== */
+const VERT = `
+#define PI 3.14159265359
+attribute float aAngle;
+attribute float aHeight;
+attribute float aRadius;
+attribute float aAspectRatio;
+attribute float aSpeed;
+attribute vec4 aTextureCoords;
+
+varying vec4 vTextureCoords;
+varying vec2 vUv;
+
+uniform float uMaxZ;
+uniform float uZrange;
+uniform float uScrollY;
+uniform float uSpeedY;
+
+vec4 qFromAxis(vec3 axis, float angle) {
+  float h = angle * 0.5;
+  return vec4(axis * sin(h), cos(h));
+}
+
+void main() {
+  vec3 scaledPos = position;
+  scaledPos.y /= aAspectRatio;
+
+  float zPos = aHeight + uScrollY;
+  float minZ = uMaxZ - uZrange;
+  zPos = mod(zPos - minZ, uZrange) + minZ;
+
+  float theta = aAngle + uSpeedY * 0.4 * aSpeed;
+  vec3 iPos = vec3(cos(theta) * aRadius, zPos, sin(theta) * aRadius);
+  float angle = atan(iPos.x, iPos.z);
+  vec4 rot = qFromAxis(vec3(0.0,1.0,0.0), angle);
+  vec3 finalPos = scaledPos + 2.0 * cross(rot.xyz, cross(rot.xyz, scaledPos) + rot.w * scaledPos);
+
+  vec4 worldPos = modelMatrix * vec4(iPos + finalPos, 1.0);
+  vec4 viewPos  = viewMatrix * worldPos;
+  gl_Position   = projectionMatrix * viewPos;
+
+  vUv = uv;
+  vTextureCoords = aTextureCoords;
+}`;
+
+const FRAG = `
+varying vec4 vTextureCoords;
+varying vec2 vUv;
+uniform sampler2D uAtlas;
+void main() {
+  vec2 atlasUV;
+  atlasUV.x = mix(vTextureCoords.x, vTextureCoords.y, vUv.x);
+  atlasUV.y = mix(vTextureCoords.z, vTextureCoords.w, 1.0 - vUv.y);
+  gl_FragColor = texture2D(uAtlas, atlasUV);
+}`;
+
+const CV_VERT = `
+varying vec2 vUv;
+void main() {
+  vec4 wp = modelMatrix * vec4(position, 1.0);
+  vec4 vp = viewMatrix * wp;
+  gl_Position = projectionMatrix * vp;
+  vUv = uv;
+}`;
+
+const CV_FRAG = `
+varying vec2 vUv;
+uniform sampler2D uAtlas;
+uniform vec4 uTextureCoords;
+void main() {
+  vec2 uv;
+  uv.x = mix(uTextureCoords.x, uTextureCoords.y, vUv.x);
+  uv.y = mix(uTextureCoords.z, uTextureCoords.w, 1.0 - vUv.y);
+  gl_FragColor = texture2D(uAtlas, uv);
+}`;
+
+/* ======================================================
+   VORTEX GALLERY ENGINE
+====================================================== */
+class VortexGallery {
+  constructor(canvas, imagePaths, onProgress) {
+    this.canvas = canvas;
+    this.imagePaths = imagePaths;
+    this.onProgress = onProgress || function() {};
+    this.disposed = false;
+    this.paused = false;
+    this.scrollY = { speedTarget:0, speedCurrent:0, target:0, current:0, direction:1 };
+    this.textureIndex = 0;
+    this.time = 0;
+    this.imageInfos = [];
+    this.atlasTexture = null;
+    this.instancedMaterial = null;
+    this.centerMaterial = null;
+    this.centerMesh = null;
+    this.instanceData = null;
+    this.instanceCount = 0;
+    this.uMaxZ = 0;
+    this.uZrange = 0;
+    this.activeIndices = null; // null = all visible
+
+    this.scene    = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xf7f4ef);
+    this.camera   = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 200);
+    this.camera.position.z = 5;
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha:false, antialias:true });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+
+    this._setupEvents();
+    this.init();
+  }
+
+  async init() {
+    await this._loadAtlas(this.imagePaths);
+    this._buildInstanced();
+    this._buildCenter();
+    this._render();
+  }
+
+  async _loadAtlas(paths) {
+    const CELL_W = 256, CELL_H = 320;
+    const cols = Math.ceil(Math.sqrt(paths.length));
+    const rows = Math.ceil(paths.length / cols);
+    const atlasW = cols * CELL_W, atlasH = rows * CELL_H;
+
+    const cvs = document.createElement('canvas');
+    cvs.width = atlasW; cvs.height = atlasH;
+    const ctx = cvs.getContext('2d');
+    ctx.fillStyle = '#f7f4ef';
+    ctx.fillRect(0, 0, atlasW, atlasH);
+
+    let loaded = 0;
+    const images = await Promise.all(paths.map(src => new Promise((res, rej) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { loaded++; this.onProgress(loaded / paths.length); res(img); };
+      img.onerror = () => { loaded++; this.onProgress(loaded / paths.length); res(null); };
+      img.src = src;
+    })));
+
+    this.imageInfos = images.map((img, i) => {
+      const col = i % cols, row = Math.floor(i / cols);
+      const destX = col * CELL_W, destY = row * CELL_H;
+      if (!img) return { width:CELL_W, height:CELL_H, aspectRatio:1, uvs:{xStart:0,xEnd:0,yStart:0,yEnd:0} };
+      const ia = img.width / img.height, ca = CELL_W / CELL_H;
+      let dw, dh, ox, oy;
+      if (ia > ca) { dw = CELL_W; dh = CELL_W / ia; ox = 0; oy = (CELL_H - dh) / 2; }
+      else         { dh = CELL_H; dw = CELL_H * ia;  oy = 0; ox = (CELL_W - dw) / 2; }
+      ctx.drawImage(img, destX+ox, destY+oy, dw, dh);
+      return {
+        width: img.width, height: img.height, aspectRatio: ia,
+        uvs: {
+          xStart: (destX+ox)/atlasW,    xEnd: (destX+ox+dw)/atlasW,
+          yStart: 1-(destY+oy)/atlasH,  yEnd: 1-(destY+oy+dh)/atlasH,
+        }
+      };
+    });
+
+    this.atlasTexture = new THREE.CanvasTexture(cvs);
+    this.atlasTexture.needsUpdate = true;
+    this.atlasTexture.generateMipmaps = true;
+    this.atlasTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    this.atlasTexture.magFilter = THREE.LinearFilter;
+  }
+
+  _buildInstanced() {
+    const geo = new THREE.BoxGeometry(1.5, 1.5, 0.075);
+    const RADIUS = 6, HEIGHT = 120, COUNT = 600;
+    const CIRCLE_COUNT = HEIGHT / 3, CIRCLE_HEIGHT = HEIGHT / CIRCLE_COUNT;
+    this.uMaxZ = HEIGHT * 0.5; this.uZrange = HEIGHT; this.instanceCount = COUNT;
+
+    this.instancedMaterial = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: FRAG, transparent: true,
+      uniforms: {
+        uAtlas:   { value: this.atlasTexture },
+        uScrollY: { value: 0 },
+        uZrange:  { value: HEIGHT },
+        uMaxZ:    { value: HEIGHT * 0.5 },
+        uSpeedY:  { value: 0 },
+      }
+    });
+
+    const mesh = new THREE.InstancedMesh(geo, this.instancedMaterial, COUNT);
+
+    const aAngles = new Float32Array(COUNT);
+    const aHeights= new Float32Array(COUNT);
+    const aRads   = new Float32Array(COUNT);
+    const aAR     = new Float32Array(COUNT);
+    const aSpeeds = new Float32Array(COUNT);
+    const aTC     = new Float32Array(COUNT * 4);
+    const aIdx    = new Uint16Array(COUNT);
+    const speeds  = Array.from({length: CIRCLE_COUNT}, () => Math.random() * 0.2 + 0.8);
+
+    for (let i = 0; i < COUNT; i++) {
+      const imgIdx = Math.floor(Math.random() * this.imageInfos.length);
+      const { xStart, xEnd, yStart, yEnd } = this.imageInfos[imgIdx].uvs;
+      aTC.set([xStart, xEnd, yStart, yEnd], i * 4);
+      aAngles[i]  = (i / COUNT) * Math.PI * 2;
+      aHeights[i] = (i % CIRCLE_COUNT) * CIRCLE_HEIGHT - HEIGHT / 2;
+      aRads[i]    = RADIUS;
+      aAR[i]      = this.imageInfos[imgIdx].aspectRatio;
+      aSpeeds[i]  = speeds[i % CIRCLE_COUNT];
+      aIdx[i]     = imgIdx;
+    }
+
+    this.instanceData = { angles: aAngles, heights: aHeights, radiuses: aRads, speeds: aSpeeds, aspectRatios: aAR, imageIndices: aIdx };
+
+    geo.setAttribute('aAngle',        new THREE.InstancedBufferAttribute(aAngles, 1));
+    geo.setAttribute('aHeight',       new THREE.InstancedBufferAttribute(aHeights, 1));
+    geo.setAttribute('aRadius',       new THREE.InstancedBufferAttribute(aRads, 1));
+    geo.setAttribute('aAspectRatio',  new THREE.InstancedBufferAttribute(aAR, 1));
+    geo.setAttribute('aSpeed',        new THREE.InstancedBufferAttribute(aSpeeds, 1));
+    geo.setAttribute('aTextureCoords',new THREE.InstancedBufferAttribute(aTC, 4));
+
+    this.instancedMesh = mesh;
+    this.scene.add(mesh);
+  }
+
+  _buildCenter() {
+    const geo = new THREE.PlaneGeometry(1.7, 2.3);
+    this.centerMaterial = new THREE.ShaderMaterial({
+      vertexShader: CV_VERT, fragmentShader: CV_FRAG, transparent: true,
+      uniforms: {
+        uAtlas: { value: this.atlasTexture },
+        uTextureCoords: { value: new THREE.Vector4(
+          this.imageInfos[0].uvs.xStart,
+          this.imageInfos[0].uvs.xEnd,
+          this.imageInfos[0].uvs.yStart,
+          this.imageInfos[0].uvs.yEnd
+        )}
+      }
+    });
+    this.centerMesh = new THREE.Mesh(geo, this.centerMaterial);
+    this.scene.add(this.centerMesh);
+  }
+
+  _setupEvents() {
+    window.addEventListener('resize', () => {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Mouse wheel
+    window.addEventListener('wheel', (e) => {
+      if (this.paused) return;
+      const dir = Math.sign(e.deltaY) || this.scrollY.direction;
+      this.scrollY.direction = dir;
+      const fov = this.camera.fov * (Math.PI / 180);
+      const h = this.camera.position.z * Math.tan(fov / 2) * 2;
+      const delta = (e.deltaY * h) / window.innerHeight;
+      this.scrollY.speedTarget += delta;
+      this.scrollY.target += delta;
+    }, { passive: true });
+
+    // Touch drag
+    let touchY0 = 0;
+    window.addEventListener('touchstart', (e) => { touchY0 = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (this.paused) return;
+      const dy = touchY0 - e.touches[0].clientY;
+      touchY0 = e.touches[0].clientY;
+      const fov = this.camera.fov * (Math.PI / 180);
+      const h = this.camera.position.z * Math.tan(fov / 2) * 2;
+      const delta = (dy * h) / window.innerHeight;
+      this.scrollY.direction = Math.sign(dy) || this.scrollY.direction;
+      this.scrollY.speedTarget += delta;
+      this.scrollY.target += delta;
+    }, { passive: true });
+  }
+
+  _lerp(a, b, t) { return a + (b - a) * t; }
+
+  _render = () => {
+    if (this.disposed) return;
+    requestAnimationFrame(this._render);
+
+    if (!this.paused) {
+      this.scrollY.target      += 0.004 * this.scrollY.direction;
+      this.scrollY.speedTarget += 0.004 * this.scrollY.direction;
+      this.scrollY.current      = this._lerp(this.scrollY.current,      this.scrollY.target,      0.1);
+      this.scrollY.speedCurrent = this._lerp(this.scrollY.speedCurrent, this.scrollY.speedTarget, 0.1);
+    }
+
+    if (this.instancedMaterial) {
+      this.instancedMaterial.uniforms.uScrollY.value = this.scrollY.current;
+      this.instancedMaterial.uniforms.uSpeedY.value  = this.scrollY.speedCurrent;
+    }
+
+    if (this.centerMaterial && this.imageInfos.length > 0) {
+      const validIndices = this.activeIndices || this.imageInfos.map((_, i) => i);
+      if (validIndices.length > 0) {
+        const mod = Math.abs(Math.floor(this.scrollY.speedTarget)) % validIndices.length;
+        this.textureIndex = validIndices[mod];
+      }
+      const uvs = this.imageInfos[this.textureIndex].uvs;
+      this.centerMaterial.uniforms.uTextureCoords.value.set(uvs.xStart, uvs.xEnd, uvs.yStart, uvs.yEnd);
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  filterByIndices(indices) {
+    this.activeIndices = indices && indices.length > 0 ? indices : null;
+    if (!this.instanceData || !this.instancedMesh) return;
+
+    const geo = this.instancedMesh.geometry;
+    const aTC = new Float32Array(this.instanceCount * 4);
+    const validSet = new Set(indices || this.imageInfos.map((_, i) => i));
+
+    for (let i = 0; i < this.instanceCount; i++) {
+      let imgIdx = this.instanceData.imageIndices[i];
+      // if current image not in filter, pick a random valid one
+      if (!validSet.has(imgIdx)) {
+        const arr = indices || this.imageInfos.map((_, i) => i);
+        imgIdx = arr[Math.floor(Math.random() * arr.length)];
+      }
+      const { xStart, xEnd, yStart, yEnd } = this.imageInfos[imgIdx].uvs;
+      aTC.set([xStart, xEnd, yStart, yEnd], i * 4);
+    }
+    geo.attributes.aTextureCoords.array = aTC;
+    geo.attributes.aTextureCoords.needsUpdate = true;
+  }
+
+  pickAtScreen(clientX, clientY, rect) {
+    const ndcX = ((clientX - rect.left) / rect.width)  * 2 - 1;
+    const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1);
+
+    if (this.centerMesh) {
+      const ray = new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+      if (ray.intersectObject(this.centerMesh).length > 0) return this.textureIndex;
+    }
+    if (!this.instanceData) return null;
+
+    const w = rect.width, h = rect.height;
+    const cx = clientX - rect.left, cy = clientY - rect.top;
+    const minZ = this.uMaxZ - this.uZrange;
+    const scrollY = this.scrollY.current, speedY = this.scrollY.speedCurrent;
+    const PIXEL_R = 55;
+    let bestIdx = null, bestZ = Infinity;
+    const pos = new THREE.Vector3();
+    const { angles, heights, radiuses, speeds, imageIndices } = this.instanceData;
+
+    for (let i = 0; i < this.instanceCount; i++) {
+      let zPos = heights[i] + scrollY;
+      const shifted = zPos - minZ;
+      zPos = ((shifted % this.uZrange) + this.uZrange) % this.uZrange + minZ;
+      const theta = angles[i] + speedY * 0.4 * speeds[i];
+      pos.set(Math.cos(theta) * radiuses[i], zPos, Math.sin(theta) * radiuses[i]);
+      pos.project(this.camera);
+      if (pos.z < -1 || pos.z > 1) continue;
+      if (Math.abs(pos.x) > 1.2 || Math.abs(pos.y) > 1.2) continue;
+      const sx = (pos.x + 1) * 0.5 * w, sy = (1 - pos.y) * 0.5 * h;
+      const dx = sx - cx, dy = sy - cy;
+      if (dx*dx + dy*dy < PIXEL_R*PIXEL_R && pos.z < bestZ) {
+        bestZ = pos.z; bestIdx = imageIndices[i];
+      }
+    }
+    return bestIdx;
+  }
+
+  setPaused(v) { this.paused = v; }
+  destroy()    { this.disposed = true; this.renderer.dispose(); }
+}
+
+/* ======================================================
+   APP
+====================================================== */
+let gallery = null;
+let currentCategory = 'All';
+
+const canvas    = document.getElementById('gl-canvas');
+const overlay   = document.getElementById('overlay');
+const closeBtn  = document.getElementById('close-btn');
+const loaderEl  = document.getElementById('loader');
+const loaderBar = document.getElementById('loader-bar');
+const loaderSub = document.getElementById('loader-sub');
+const selInd    = document.getElementById('sel-indicator');
+const selLabel  = document.getElementById('sel-label');
+
+function showOverlay(idx) {
+  const img = IMAGES[idx];
+  if (!img) return;
+  document.getElementById('overlay-img').src = img.src;
+  document.getElementById('overlay-img').alt = img.title;
+  document.getElementById('ov-eyebrow').textContent = img.category + ' — Project Detail';
+  document.getElementById('ov-title').textContent   = img.title;
+  document.getElementById('ov-desc').textContent    = img.description;
+  document.getElementById('ov-meta').innerHTML =
+    `<span class="ov-meta-label">File</span><span class="ov-meta-val" style="font-family:'DM Mono',monospace">${img.src.split('/').pop()}</span>
+     <span class="ov-meta-label">Program</span><span class="ov-meta-val">${img.title.split(' — ')[0]}</span>`;
+
+  overlay.classList.add('open');
+  closeBtn.classList.add('visible');
+  gallery.setPaused(true);
+
+  // Show selected badge
+  selLabel.textContent = img.title.length > 40 ? img.title.slice(0, 38) + '…' : img.title;
+  selInd.classList.add('show');
+}
+
+function closeOverlay() {
+  overlay.classList.remove('open');
+  closeBtn.classList.remove('visible');
+  gallery.setPaused(false);
+  setTimeout(() => selInd.classList.remove('show'), 1200);
+}
+
+function getFilteredIndices(cat) {
+  if (cat === 'All') return null;
+  return IMAGES.reduce((acc, img, i) => { if (img.category === cat) acc.push(i); return acc; }, []);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const paths = IMAGES.map(i => i.src);
+
+  gallery = new VortexGallery(canvas, paths, (pct) => {
+    loaderBar.style.width = (pct * 100) + '%';
+    loaderSub.textContent = `Loading images… ${Math.round(pct * 100)}%`;
+    if (pct >= 1) {
+      loaderSub.textContent = 'Ready';
+      setTimeout(() => loaderEl.classList.add('done'), 350);
+    }
+  });
+
+  // Canvas click → pick image
+  canvas.addEventListener('click', (e) => {
+    const idx = gallery.pickAtScreen(e.clientX, e.clientY, canvas.getBoundingClientRect());
+    if (idx !== null) showOverlay(idx);
+  });
+
+  // Close overlay
+  closeBtn.addEventListener('click', closeOverlay);
+  document.getElementById('ov-close').addEventListener('click', closeOverlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeOverlay(); });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeOverlay(); });
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.cat;
+      gallery.filterByIndices(getFilteredIndices(currentCategory));
+    });
+  });
+});
+
+/* ======================================================
+   THUMBNAIL PANEL
+====================================================== */
+(function() {
+  const panel      = document.getElementById('thumb-panel');
+  const toggleBtn  = document.getElementById('thumb-toggle');
+  const grid       = document.getElementById('thumb-grid');
+  const searchInput= document.getElementById('thumb-search-input');
+  const countEl    = document.getElementById('thumb-count');
+  const subtitle   = document.getElementById('panel-subtitle');
+
+  let panelOpen = false;
+  let panelCat  = 'All';
+  let panelQ    = '';
+  let selectedThumbIdx = null;
+
+  function openPanel() {
+    panelOpen = true;
+    panel.classList.add('open');
+    toggleBtn.classList.add('open');
+    toggleBtn.textContent = '✕ Close';
+  }
+  function closePanel() {
+    panelOpen = false;
+    panel.classList.remove('open');
+    toggleBtn.classList.remove('open');
+    toggleBtn.textContent = 'Browse';
+  }
+
+  toggleBtn.addEventListener('click', () => panelOpen ? closePanel() : openPanel());
+
+  // Build thumbnails
+  function buildGrid() {
+    const q = panelQ.toLowerCase();
+    const filtered = IMAGES.map((img,i) => ({img,i})).filter(({img}) => {
+      const catOk = panelCat === 'All' || img.category === panelCat;
+      const qOk   = !q || img.title.toLowerCase().includes(q) || img.category.toLowerCase().includes(q);
+      return catOk && qOk;
+    });
+
+    countEl.textContent = filtered.length + ' image' + (filtered.length !== 1 ? 's' : '');
+    subtitle.textContent = filtered.length + ' photograph' + (filtered.length !== 1 ? 's' : '');
+    grid.innerHTML = '';
+
+    filtered.forEach(({img, i}) => {
+      const item = document.createElement('div');
+      item.className = 'thumb-item' + (selectedThumbIdx === i ? ' selected' : '');
+      item.dataset.idx = i;
+
+      const imgEl = document.createElement('img');
+      imgEl.src = img.src;
+      imgEl.alt = img.title;
+      imgEl.loading = 'lazy';
+
+      const label = document.createElement('div');
+      label.className = 'th-label';
+      label.innerHTML = `<span class="th-cat">${img.category}</span><br>${img.title.split(' — ')[0]}`;
+
+      item.appendChild(imgEl);
+      item.appendChild(label);
+
+      item.addEventListener('click', () => {
+        // Mark selected
+        selectedThumbIdx = i;
+        document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+        // Open the detail overlay
+        showOverlay(i);
+      });
+
+      grid.appendChild(item);
+    });
+  }
+
+  // Category filter in panel
+  document.querySelectorAll('.tc-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tc-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      panelCat = btn.dataset.pcat;
+      buildGrid();
+    });
+  });
+
+  // Search
+  searchInput.addEventListener('input', (e) => {
+    panelQ = e.target.value;
+    buildGrid();
+  });
+
+  // Build on load (wait for IMAGES to be available)
+  window.addEventListener('load', buildGrid);
+
+  // Also rebuild when overlay closes to sync selected state
+  const origClose = window.closeOverlayCallback;
+})();
+
+</script>
+
+  <!-- Thumbnail toggle button -->
+  <button id="thumb-toggle" title="Browse images">Browse</button>
+
+  <!-- Thumbnail panel -->
+  <div id="thumb-panel">
+    <div id="thumb-header">
+      <h3>Image Library</h3>
+      <p id="panel-subtitle">24 photographs</p>
+    </div>
+    <div id="thumb-search">
+      <input type="text" id="thumb-search-input" placeholder="Search images…" />
+    </div>
+    <div id="thumb-cats">
+      <button class="tc-btn active" data-pcat="All">All</button>
+      <button class="tc-btn" data-pcat="Education">Education</button>
+      <button class="tc-btn" data-pcat="Healthcare">Healthcare</button>
+      <button class="tc-btn" data-pcat="Community">Community</button>
+      <button class="tc-btn" data-pcat="Environment">Environment</button>
+      <button class="tc-btn" data-pcat="Emergency Relief">Relief</button>
+      <button class="tc-btn" data-pcat="Operations">Operations</button>
+    </div>
+    <div id="thumb-count"></div>
+    <div id="thumb-grid"></div>
+  </div>
+
+</body>
+</html>

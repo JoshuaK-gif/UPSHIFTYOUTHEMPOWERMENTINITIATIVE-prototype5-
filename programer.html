@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CKD1R97VVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CKD1R97VVB');
+</script>
   <meta charset="UTF-8">
    <meta name="keywords" content="UPSHIFT, YOUTH, EMPOWERMENT, INITIATIVE, USYEI, Uganda, education, mentorship, creative innovation, Muvunyi Joseph" />
   <meta name="description" content="UPSHIFT YOUTH EMPOWERMENT INITIATIVE (USYEI) is a non-profit organization dedicated to empowering young people in Uganda through education, mentorship, and creative innovation.">
@@ -55,26 +63,37 @@ body {
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 
+
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--blue-light); }
 ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 99px; }
-
-/* ═══════
+/* ══════════════════════════════════════════════════════════
    NAVBAR
-═══════ */
+══════════════════════════════════════════════════════════ */
+#site-header {
+  position: sticky;
+  top: 0px;
+  z-index: 1000;
+  width: 100%;
+}
 .navbar {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 0 48px; height: 72px;
-  background: var(--white);
+  background-color: whitesmoke;
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 1000; width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
   transition: height .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease);
 }
 .navbar.shrink {
   height: 54px;
   background: transparent;
   box-shadow: 0 4px 28px rgba(11,42,64,.5);
-  backdrop-filter: blur(10px);
 }
 .navbar.shrink .navlink          { color: rgba(255,255,255,.7); }
 .navbar.shrink .navlink:hover    { color: var(--blue); }
@@ -96,33 +115,63 @@ a { text-decoration: none; color: inherit; }
 .org-name p  { margin: 0; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: .04em; }
 .org-name span { font-size: 9px; color: var(--red); text-transform: uppercase; letter-spacing: .1em; }
 
-.navlinks { display: flex; align-items: center; gap: 2px; list-style: none; }
+.navlinks { display: flex; align-items: center; gap: 2px; list-style: none; flex-wrap: nowrap; }
 .navlink {
+  font-family: 'DM Sans', sans-serif;
   font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
   padding: 8px 14px; border-radius: 8px;
   position: relative; transition: color .25s, background .25s;
+  white-space: nowrap;
+  cursor: pointer;
 }
+.navlink:hover { color: var(--blue); }
 .navlink::after {
   content: ''; position: absolute; bottom: 4px; left: 14px; right: 14px;
   height: 2px; background: var(--blue); border-radius: 99px;
   transform: scaleX(0); transform-origin: center; transition: transform .25s var(--ease);
 }
-.navlink:hover { color: var(--blue); }
 .navlink:hover::after { transform: scaleX(1); }
-.navlink:last-child {
+
+.navlink:last-child, .navlink.cta-dropdown-trigger {
   background: var(--blue); color: var(--white) !important;
   font-weight: 600; border-radius: 99px; padding: 9px 22px !important;
   margin-left: 8px; box-shadow: 0 4px 18px rgba(71,184,224,.35);
-  transition: background .3s, transform .2s var(--ease-spring), box-shadow .3s !important;
+  transition: color .25s, background .25s !important;
 }
-.navlink:last-child::after { display: none !important; }
-.navlink:last-child:hover {
-  background: var(--blue-dark) !important; transform: translateY(-2px);
-  box-shadow: 0 10px 32px rgba(71,184,224,.5) !important; color: var(--white) !important;
+.navlink:last-child::after, .navlink.cta-dropdown-trigger::after {
+  background: var(--white);
+}
+.navlink:last-child:hover, .navlink.cta-dropdown-trigger:hover {
+  background: var(--blue-dark) !important; color: var(--white) !important;
 }
 
+/* ── DROPDOWN ── */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-content {
+  display: none; position: absolute; background-color: var(--white);
+  min-width: 180px; box-shadow: 0px 8px 32px rgba(0,0,0,0.15);
+  z-index: 1100; border-radius: 12px; top: calc(100% + 5px); right: 0;
+  padding: 10px 0; border: 1px solid var(--border);
+  overflow: hidden;
+}
+.dropdown:hover .dropdown-content { display: block; animation: slideDown 0.3s var(--ease); }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.dropdown-content a {
+  color: var(--ink-soft); padding: 12px 20px; text-decoration: none;
+  display: block; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  font-weight: 700; transition: all 0.2s;
+}
+.dropdown-content a:hover {
+  background-color: var(--blue-light); color: var(--orange); padding-left: 24px;
+}
+
+/* ── HAMBURGER TOGGLE ── */
 .nav-toggle {
-  display: none; background: none; border: none; cursor: pointer;
+  display: none;                  /* hidden on desktop */
+  background: none; border: none; cursor: pointer;
   flex-direction: column; gap: 5px; padding: 6px; z-index: 1001;
 }
 .nav-toggle span {
@@ -133,15 +182,22 @@ a { text-decoration: none; color: inherit; }
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
 .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* mobile menu */
+/* ── MOBILE SLIDE-IN MENU ── */
 .mobile-nav {
-  display: none; flex-direction: column;
-  background: var(--white); padding: 10px 24px 24px;
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 8px 32px rgba(0,0,0,.08);
-  position: sticky; top: 72px; z-index: 999; width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--off-white);
+  padding: 80px 24px 24px;
+  box-shadow: 5px 0 25px rgba(0,0,0,.15);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 999;
+  width: 300px; max-width: 85%;
+  transform: translateX(-105%);
+  transition: transform 0.4s ease-in-out;
+  backdrop-filter: blur(10px);
 }
-.mobile-nav.open { display: flex; }
+.mobile-nav.open { transform: translateX(0); }
 .mobile-nav a {
   padding: 13px 0; font-weight: 600; font-size: 15px;
   color: var(--ink); border-bottom: 1px solid rgba(0,0,0,.05);
@@ -149,13 +205,46 @@ a { text-decoration: none; color: inherit; }
 }
 .mobile-nav a:last-child { border-bottom: none; }
 .mobile-nav a:hover { color: var(--blue); }
-@media (max-width: 768px) {
-  .navbar { padding: 0 20px; height: 60px; }
-  .navlinks { display: none; }
-  .nav-toggle { display: flex; }
+
+/* ── MOBILE DROPDOWN ── */
+.mobile-dropdown { display: flex; flex-direction: column; }
+.mobile-dropdown-content {
+  display: none;
+  flex-direction: column;
+  padding-left: 20px;
+  background: rgba(0,0,0,0.02);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
 }
-@media (max-width: 480px) {
-  .navbar { padding: 0 16px; }
+.mobile-dropdown-content.open {
+  display: flex;
+  max-height: 500px;
+}
+.mobile-dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mobile-dropdown-toggle .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.mobile-dropdown-toggle.open .arrow { transform: rotate(180deg); }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE NAV
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+    height: 60px;
+  }
+  .logo img { height: 44px; }
+
+  .navlinks { display: none; }   /* hide desktop links */
+
+  .nav-toggle { display: flex; } /* show hamburger       */
 }
 /* ══════════════════════════════════════════════════════════
    HERO
@@ -1616,7 +1705,8 @@ a { text-decoration: none; color: inherit; }
 <body>
 <div id="progress-bar"></div>
   <!-- ── NAVBAR ─────────────────────────────────────────── -->
-    <div id="site-header" style="position:sticky;top:0;z-index:1000;width:100%;">
+  <div>
+  <div id="site-header">
     <nav class="navbar" id="navbar">
       <div class="navbar-left">
         <a class="logo" href="index.html">
@@ -1627,28 +1717,40 @@ a { text-decoration: none; color: inherit; }
           <p>Upshift Youth Empowerment Initiative</p>
         </a>
       </div>
-
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
-
-      <ul class="navlinks">
+       <ul class="navlinks">
         <li><a href="index.html"    class="navlink">Home</a></li>
-        <li><a href="About us.html" class="navlink">About Us</a></li>
+        <li><a href="About us.html"    class="navlink">About Us</a></li>
         <li><a href="programer.html" class="navlink">Programs</a></li>
+        <li><a href="gallery-vortex.html"  class="navlink">Gallery</a></li>
         <li><a href="contact (2).html"  class="navlink">Contact</a></li>
-        <li><a href="donate.html" class="navlink">Support</a></li>
+        <li class="dropdown">
+          <a href="#" class="navlink cta-dropdown-trigger">Get Involved ▾</a>
+          <div class="dropdown-content">
+            <a href="donate.html">Support / Donate</a>
+            <a href="volunteer.html">Volunteer</a>
+          </div>
+        </li>
       </ul>
     </nav>
-
     <nav class="mobile-nav" id="mobileMenu">
-       <a href="index.html">Home</a>
+      <a href="index.html">Home</a>
       <a href="About us.html">About Us</a>
       <a href="programer.html">Programs</a>
+      <a href="gallery-vortex.html">Gallery</a>
       <a href="contact (2).html">Contact</a>
-      <a href="donate.html">Support</a>
+      <div class="mobile-dropdown">
+        <a href="javascript:void(0)" class="mobile-dropdown-toggle">Get Involved ▾</a>
+        <div class="mobile-dropdown-content">
+          <a href="donate.html">Support / Donate</a>
+          <a href="volunteer.html">Volunteer</a>
+        </div>
+      </div>
     </nav>
   </div>
+</div>
 
   <!-- ── HERO ────────────── -->
   <section class="programs-hero">
@@ -1831,7 +1933,7 @@ By combining these activities, the program fosters emotional resilience, social 
 </div>
         <div class="cta-row">
           <a href="readmoreA.html" class="readmoreA" id="bttnAT" onclick="toggleReadMore1(event)" >Read More</a>
-          <a href="usyei_gallery (2).html" class="gallery-link" >View Gallery</a>
+          <a href="gallery-vortex.html" class="gallery-link" >View Gallery</a>
         </div>
         
         <div class="art-chips">
@@ -1887,7 +1989,7 @@ By combining these activities, the program fosters emotional resilience, social 
         a brighter tomorrow.
       </p>
 </div>
-      <a href="readmoreF.html" class="readmoreF" id="bttnFN" onclick="toggleReadMore2(event)">Read More</a>
+      <a href="#" class="readmoreF" id="bttnFN" onclick="toggleReadMore2(event)">Read More</a>
 
     </div>
   </div>
@@ -1907,12 +2009,13 @@ By combining these activities, the program fosters emotional resilience, social 
     </div>
 
     <!-- Quick Links -->
-       <div class="footer-links">
+    <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="upshift.html">Home</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="programs.html">Programs</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="About us.html">About Us</a></li>
+        <li><a href="programer.html">Programs</a> </li>
+        <li><a href="gallery-vortex.html">Gallery</a></li>
          <li><a href="contact (2).html">Contact</a></li>
         <li><a href="donate.html">Give Now</a></li>
       </ul>
@@ -1924,19 +2027,20 @@ By combining these activities, the program fosters emotional resilience, social 
       <h3>Contact Us</h3>
       <p>Email: <a href="mailto:Upshiftyouth@gmail.com">Upshiftyouth@gmail.com</a></p>
       <p>Phone: (+256)765675742</p>
-      <p>Address: Kampala, Uganda</p>
+      <p>Address: Wampala, Buikwe, Uganda</p>
+      
     </div>
 
     <!-- Social Media -->
     <div class="footer-social">
       <h3>Follow Us</h3>
       <div class="social-icons">
-        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://tiktok.com" target="_blank"><i class="fab fa-tiktok"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/search/top?q=upshift%20youth%20empowerment%20initiative" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/Upshiftyouths" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.instagram.com/upshiftyouths/" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@UpshiftYouthEmpowerment" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.tiktok.com/@upshiftyouths0" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/search/results/all/?keywords=upshift%20youth%20empowerment%20initiative&origin=RICH_QUERY_SUGGESTION&spellCorrectionEnabled=false&heroEntityKey=urn%3Ali%3Aorganization%3A106165899&position=0" target="_blank"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </div>
@@ -1948,14 +2052,16 @@ By combining these activities, the program fosters emotional resilience, social 
 </section>
 
   <script>
-      const bar = document.getElementById('progress-bar');
+ const bar = document.getElementById('progress-bar');
     window.addEventListener('scroll', () => {
       const total = document.body.scrollHeight - window.innerHeight;
       bar.style.width = (window.scrollY / total * 100) + '%';
     });
   
-    // Navbar shrink
-    const navbar = document.getElementById('navbar');
+  
+  
+  
+  const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('shrink', window.scrollY > 60);
     }, { passive: true });
@@ -1963,16 +2069,35 @@ By combining these activities, the program fosters emotional resilience, social 
     // Hamburger
     const toggle  = document.getElementById('navToggle');
     const mobileM = document.getElementById('mobileMenu');
+
     toggle.addEventListener('click', () => {
       toggle.classList.toggle('open');
       mobileM.classList.toggle('open');
-    });
+    }, { passive: true });
+
     mobileM.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        toggle.classList.remove('open');
-        mobileM.classList.remove('open');
+      link.addEventListener('click', (e) => {
+        if (link.classList.contains('mobile-dropdown-toggle')) {
+          const content = link.nextElementSibling;
+          if (content) content.classList.toggle('open');
+        } else {
+          toggle.classList.remove('open');
+          mobileM.classList.remove('open');
+        }
       });
     });
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+  const isInsideNav = navbar.contains(e.target);
+  const isInsideMenu = mobileM.contains(e.target);
+
+  if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
+    toggle.classList.remove('open');
+    mobileM.classList.remove('open');
+  }
+}, { passive: true });
+
+
 
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
@@ -2088,75 +2213,6 @@ By combining these activities, the program fosters emotional resilience, social 
   }
 
 
-/*
-    // ── Dance slideshow ──────────────────────────────────────────────────
-    (function() {
-      const slides    = document.querySelectorAll('#danceSlideshow .slide');
-      const dots      = document.querySelectorAll('#slideDots .dot');
-      const btnPrev   = document.getElementById('slidePrev');
-      const btnNext   = document.getElementById('slideNext');
-      let current     = 0;
-      let timer       = null;
-      const INTERVAL  = 3000;   // ms between auto-flips
-
-      function goTo(index) {
-        var prev = current;
-        current = (index + slides.length) % slides.length;
-        if (prev === current) return;
-        // add exit rotation to outgoing slide
-        slides[prev].classList.add('exit');
-        slides[prev].classList.remove('active');
-        dots[prev].classList.remove('active');
-        // after transition ends, clean up exit class
-        setTimeout(function() {
-          slides[prev].classList.remove('exit');
-        }, 700);
-        slides[current].classList.add('active');
-        dots[current].classList.add('active');
-      }
-
-      function next() { goTo(current + 1); }
-      function prev() { goTo(current - 1); }
-
-      function startTimer() {
-        clearInterval(timer);
-        timer = setInterval(next, INTERVAL);
-      }
-
-      // arrow buttons
-      btnNext.addEventListener('click', function() { next(); startTimer(); });
-      btnPrev.addEventListener('click', function() { prev(); startTimer(); });
-
-      // dot buttons
-      dots.forEach(function(dot) {
-        dot.addEventListener('click', function() {
-          goTo(parseInt(this.dataset.index));
-          startTimer();
-        });
-      });
-
-      // pause on hover
-      const container = document.getElementById('danceSlideshow');
-      container.addEventListener('mouseenter', function() { clearInterval(timer); });
-      container.addEventListener('mouseleave', startTimer);
-
-      startTimer();
-    })();
-
-  function toggleReadMore5(event){
-    event.preventDefault();
-    const contapproach=document.getElementById('approach');
-    const bttnapproach=document.getElementById('bttnapproach');
-
-    contapproach.classList.toggle('expanded');
-     if(contapproach.classList.contains('expanded')){
-      bttnapproach.textContent='Read Less ←';
-     }
-     else{
-      bttnapproach.innerHTML='Read More →';
-     }
-  }
-*/
 
 
 
@@ -2196,3 +2252,4 @@ function toggleReadMore1(event){
 
 </body>
 </html>
+

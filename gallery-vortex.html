@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Upshift Youth Empowerment Initiative</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════════
+       ROOT & VARIABLES
+    ══════════════════════════════════════════════════════════ */
+    :root {
+      --blue:         #47b8e0;
+      --blue-dark:    #1a6fa3;
+      --blue-deep:    #0b2a40;
+      --blue-light:   #d6f0fb;
+      --orange:       #f5a623;
+      --orange-dk:    #c97d0a;
+      --red:          #d42b2b;
+      --black:        #0d1117;
+      --ink:          #111827;
+      --ink-soft:     #374151;
+      --muted:        #6b7280;
+      --off-white:    #f7f9fc;
+      --white:        #ffffff;
+      --border:       #e5e7eb;
+      --cream:        #fdf8f2;
+      --paper:        #f7f4ef;
+      --gold:         #c8a96e;
+      --ash:          rgba(14,14,14,0.45);
+      
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Outfit', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+      --font-sans:    'DM Sans', sans-serif;
+      
+      --ease:         cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-spring:  cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      width: 100%; height: 100%;
+      overflow: hidden; /* Important for the 3D gallery */
+      cursor: crosshair;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--blue-light); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 99px; }
+
+    /* ══════════════════════════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════════════════════════ */
+   
+:root {
+  --blue:         #47b8e0;
+  --blue-dark:    #1a6fa3;
+  --blue-deep:    #0b2a40;
+  --blue-light:   #d6f0fb;
+  --orange:       #f5a623;
+  --orange-dk:    #c97d0a;
+  --red:          #d42b2b;
+  --black:        #0d1117;
+  --ink:          #111827;
+  --ink-soft:     #374151;
+  --muted:        #6b7280;
+  --off-white:    #f7f9fc;
+  --white:        #ffffff;
+  --border:       #e5e7eb;
+  --cream:        #fdf8f2;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Outfit', sans-serif;
+
+  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ══════════
+   RESET & BASE
+════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--off-white);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--blue-light); }
+::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 99px; }
+
+/* ══════════════════════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════════════════════ */
+#site-header {
+  position: sticky;
+  top: 0px;
+  z-index: 1000;
+  width: 100%;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px; height: 72px;
+  background-color: whitesmoke;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  transition: height .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease);
+}
+.navbar.shrink {
+  height: 54px;
+  background: transparent;
+  box-shadow: 0 4px 28px rgba(11,42,64,.5);
+}
+.navbar.shrink .navlink          { color: rgba(255,255,255,.7); }
+.navbar.shrink .navlink:hover    { color: var(--blue); }
+.navbar.shrink .navlink:last-child { background: var(--orange); color: var(--white); }
+.navbar.shrink .org-name         { color: var(--blue); }
+.navbar.shrink .nav-toggle span  { background: var(--white); }
+
+.navbar-left { display: flex; align-items: center; gap: 12px; }
+.logo img { height: 52px; width: auto; transition: transform .3s var(--ease-spring); }
+.logo img:hover { transform: scale(1.06) rotate(-3deg); }
+
+.org-name {
+  font-family: var(--font-body); font-weight: 800; font-size: 20px;
+  letter-spacing: .05em; color: var(--blue);
+  display: flex; flex-direction: column; align-items: flex-start;
+  transition: color .3s; line-height: 1.2;
+}
+.org-name:hover { color: var(--orange); }
+.org-name p  { margin: 0; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: .04em; }
+.org-name span { font-size: 9px; color: var(--red); text-transform: uppercase; letter-spacing: .1em; }
+
+.navlinks { display: flex; align-items: center; gap: 2px; list-style: none; flex-wrap: nowrap; }
+.navlink {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
+  padding: 8px 14px; border-radius: 8px;
+  position: relative; transition: color .25s, background .25s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.navlink:hover { color: var(--blue); }
+.navlink::after {
+  content: ''; position: absolute; bottom: 4px; left: 14px; right: 14px;
+  height: 2px; background: var(--blue); border-radius: 99px;
+  transform: scaleX(0); transform-origin: center; transition: transform .25s var(--ease);
+}
+.navlink:hover::after { transform: scaleX(1); }
+
+.navlink:last-child, .navlink.cta-dropdown-trigger {
+  background: var(--blue); color: var(--white) !important;
+  font-weight: 600; border-radius: 99px; padding: 9px 22px !important;
+  margin-left: 8px; box-shadow: 0 4px 18px rgba(71,184,224,.35);
+  transition: color .25s, background .25s !important;
+}
+.navlink:last-child::after, .navlink.cta-dropdown-trigger::after {
+  background: var(--white);
+}
+.navlink:last-child:hover, .navlink.cta-dropdown-trigger:hover {
+  background: var(--blue-dark) !important; color: var(--white) !important;
+}
+
+/* ── DESKTOP DROPDOWN ── */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-content {
+  display: none; position: absolute; background-color: var(--white);
+  min-width: 180px; box-shadow: 0px 8px 32px rgba(0,0,0,0.15);
+  z-index: 1100; border-radius: 12px; top: calc(100% + 5px); right: 0;
+  padding: 10px 0; border: 1px solid var(--border);
+  overflow: hidden;
+}
+.dropdown:hover .dropdown-content { display: block; animation: slideDown 0.3s var(--ease); }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.dropdown-content a {
+  color: var(--ink-soft); padding: 12px 20px; text-decoration: none;
+  display: block; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  font-weight: 700; transition: all 0.2s;
+}
+.dropdown-content a:hover {
+  background-color: var(--blue-light); color: var(--orange); padding-left: 24px;
+}
+
+/* ── HAMBURGER TOGGLE ── */
+.nav-toggle {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  flex-direction: column; gap: 5px; padding: 6px; z-index: 1001;
+}
+.nav-toggle span {
+  display: block; width: 24px; height: 2px; background: var(--ink);
+  border-radius: 99px; transition: transform .3s, opacity .3s;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── MOBILE SLIDE-IN MENU ── */
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  background: var(--off-white);
+  padding: 80px 24px 24px;
+  box-shadow: 5px 0 25px rgba(0,0,0,.15);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 999;
+  width: 300px; max-width: 85%;
+  transform: translateX(-105%);
+  transition: transform 0.4s ease-in-out;
+  backdrop-filter: blur(10px);
+}
+.mobile-nav.open { transform: translateX(0); }
+.mobile-nav a {
+  padding: 13px 0; font-weight: 600; font-size: 15px;
+  color: var(--ink); border-bottom: 1px solid rgba(0,0,0,.05);
+  transition: color .25s;
+  font-family: 'DM Sans', sans-serif;
+}
+.mobile-nav a:last-child { border-bottom: none; }
+.mobile-nav a:hover { color: var(--blue); }
+
+/* ── MOBILE DROPDOWN ── */
+.mobile-dropdown { display: flex; flex-direction: column; }
+.mobile-dropdown-content {
+  display: none;
+  flex-direction: column;
+  padding-left: 20px;
+  background: rgba(0,0,0,0.02);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.mobile-dropdown-content.open {
+  display: flex;
+  max-height: 500px;
+}
+.mobile-dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0; font-weight: 600; font-size: 15px;
+  color: var(--ink); border-bottom: 1px solid rgba(0,0,0,.05);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.mobile-dropdown-toggle:hover { color: var(--blue); }
+.mobile-dropdown-toggle .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.mobile-dropdown-toggle.open .arrow { transform: rotate(180deg); }
+
+/* ── MOBILE CTA BUTTON ── */
+.mobile-nav .mobile-cta {
+  margin-top: 16px;
+  background: var(--blue);
+  color: var(--white) !important;
+  text-align: center;
+  border-radius: 99px;
+  padding: 12px 24px !important;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(71,184,224,.35);
+  border-bottom: none !important;
+  transition: background .3s !important;
+  font-family: 'DM Sans', sans-serif;
+}
+.mobile-nav .mobile-cta:hover {
+  background: var(--blue-dark) !important;
+}
+
+/* ── SCROLL PROGRESS BAR ── */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, cyan, orange, red);
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px; right: 60px;
+  z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; color: gold; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0;
+  animation: fadeUp 0.8s 1.4s forwards;
+}
+.scroll-line {
+  width: 1.7px; height: 50px;
+  background: linear-gradient(to bottom, gold, transparent);
+  animation: scrollAnim 2s infinite;
+}
+@keyframes scrollAnim {
+  0%  { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100%{ transform: scaleY(0); transform-origin: bottom; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE NAV
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar { padding: 0 20px; height: 60px; }
+  .logo img { height: 44px; }
+  .navlinks { display: none; }
+  .nav-toggle { display: flex; }
+
+  .programs__body { flex-direction: column; gap: 40px; align-items: center; }
+  .programs__image-wrap { width: clamp(220px, 65vw, 300px); }
+  .programs__cards { width: 100%; }
+  .program-card__desc { max-width: 100%; }
+}
+@media (max-width: 480px) {
+  .navbar { padding: 0 16px; }
+  .programs { padding: 50px 6vw 60px; }
+  .program-card__icon { width: 50px; height: 50px; }
+  .program-card__icon svg { width: 24px; height: 24px; }
+}
+
+    /* ══════════════════════════════════════════════════════════
+       3D GALLERY ENGINE STYLES
+    ══════════════════════════════════════════════════════════ */
+    #gl-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0;
+      height: 4px; width: 0%;
+      background: linear-gradient(90deg, cyan, var(--orange), var(--red));
+      z-index: 2000; transition: width 0.1s linear;
+    }
+
+    #hud { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
+    
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%); font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--ink); opacity: .35; display: flex; align-items: center; gap: 10px;
+    }
+    .scroll-hint::before, .scroll-hint::after {
+      content: ''; display: block; width: 28px; height: 1px;
+      background: var(--ink); opacity: .4;
+    }
+
+    #filter-bar {
+      position: fixed; bottom: 64px; left: 50%;
+      transform: translateX(-50%); z-index: 11;
+      display: flex; gap: 8px; pointer-events: auto;
+    }
+    .filter-btn {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 6px 14px; background: transparent;
+      border: 1px solid rgba(14,14,14,.25); color: var(--ink);
+      cursor: pointer; transition: all .2s; border-radius: 2px;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--ink); color: var(--paper); border-color: var(--ink);
+    }
+
+    #overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(10, 9, 7, 0.93); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 48px; opacity: 0; pointer-events: none;
+      transition: opacity .38s ease;
+    }
+    #overlay.open { opacity: 1; pointer-events: auto; }
+    #overlay-inner {
+      display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+      gap: 60px; max-width: 1440px; width: 100%; max-height: 100%;
+      align-items: center; transform: scale(.97); transition: transform .38s ease;
+    }
+    #overlay.open #overlay-inner { transform: scale(1); }
+    #overlay-img {
+      display: block; max-width: 100%; max-height: calc(100vh - 120px);
+      object-fit: contain; box-shadow: 0 50px 120px rgba(0,0,0,.6);
+    }
+    #overlay-text {
+      color: var(--paper); display: flex; flex-direction: column; gap: 22px;
+      max-height: calc(100vh - 120px); overflow-y: auto;
+    }
+    .ov-eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: .5; }
+    .ov-title { font-family: var(--font-display); font-size: clamp(26px, 2.4vw, 38px); font-weight: 300; line-height: 1.18; }
+    .ov-desc { font-family: var(--font-display); font-size: 17px; line-height: 1.72; color: rgba(247,244,239,.8); }
+    .ov-meta { margin-top: 6px; padding-top: 18px; border-top: 1px solid rgba(247,244,239,.12); display: grid; grid-template-columns: 100px 1fr; row-gap: 8px; font-family: var(--font-mono); font-size: 11px; }
+
+    #close-btn {
+      position: fixed; top: 22px; right: 32px; z-index: 110;
+      background: transparent; border: none; color: var(--paper);
+      font-size: 30px; line-height: 1; cursor: pointer;
+      padding: 8px 10px; opacity: .55; transition: opacity .2s; display: none;
+    }
+    #close-btn.visible { display: block; }
+    #ov-close {
+      align-self: flex-start; margin-top: 14px; background: transparent;
+      color: var(--paper); border: 1px solid rgba(247,244,239,.3);
+      padding: 9px 22px; font-family: var(--font-mono); font-size: 11px;
+      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+    }
+
+    #loader {
+      position: fixed; inset: 0; z-index: 2000; background: var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 18px; transition: opacity .5s ease;
+    }
+    #loader.done { opacity: 0; pointer-events: none; }
+
+    /* Thumbnail Panel */
+    #thumb-toggle {
+      position: fixed; top: 50%; right: 0; transform: translateY(-50%);
+      z-index: 20; background: var(--ink); color: var(--paper); border: none;
+      padding: 14px 8px; cursor: pointer; font-family: var(--font-mono);
+      font-size: 9px; writing-mode: vertical-rl; border-radius: 4px 0 0 4px;
+      transition: right .35s ease;
+    }
+    #thumb-toggle.open { right: 280px; }
+    #thumb-panel {
+      position: fixed; top: 0; right: -280px; width: 280px; height: 100vh;
+      z-index: 19; background: rgba(14,14,14,0.96); backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; transition: right .35s ease;
+    }
+    #thumb-panel.open { right: 0; }
+    #thumb-grid { flex: 1; overflow-y: auto; padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .thumb-item { border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; border: 2px solid transparent; cursor: pointer; }
+    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-item.selected { border-color: var(--gold); }
+
+    .site-footer {
+      position: fixed; bottom: 0; width: 100%; text-align: center;
+      color: var(--ink); font-family: var(--font-mono); font-size: 10px;
+      text-transform: uppercase; padding: 15px 0; background: var(--paper); z-index: 5;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="progress-bar"></div>
+
+  <!-- ── NAVBAR ─────────────────────────────────────────── -->
+ <div>
+  <div id="site-header">
+    <nav class="navbar" id="navbar">
+      <div class="navbar-left">
+        <a class="logo" href="index.html">
+          <img src="USYEI.PNG" alt="Upshift Youth Empowerment Initiative logo">
+        </a>
+        <a class="org-name" href="index.html">
+          USYEI
+          <p>Upshift Youth Empowerment Initiative</p>
+        </a>
+      </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+       <ul class="navlinks">
+        <li><a href="index.html"    class="navlink">Home</a></li>
+        <li><a href="About us.html"    class="navlink">About Us</a></li>
+        <li><a href="programer.html" class="navlink">Programs</a></li>
+        <li><a href="gallery-vortex.html"  class="navlink">Gallery</a></li>
+        <li><a href="contact (2).html"  class="navlink">Contact</a></li>
+        <li class="dropdown">
+          <a href="#" class="navlink cta-dropdown-trigger">Get Involved ▾</a>
+          <div class="dropdown-content">
+            <a href="donate.html">Support / Donate</a>
+            <a href="volunteer.html">Volunteer</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    <nav class="mobile-nav" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="About us.html">About Us</a>
+      <a href="programer.html">Programs</a>
+      <a href="gallery-vortex.html">Gallery</a>
+      <a href="contact (2).html">Contact</a>
+      <div class="mobile-dropdown">
+        <a href="javascript:void(0)" class="mobile-dropdown-toggle">Get Involved ▾</a>
+        <div class="mobile-dropdown-content">
+          <a href="donate.html">Support / Donate</a>
+          <a href="volunteer.html">Volunteer</a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+  <!-- ── LOADING SCREEN ─────────────────────────────────── -->
+  <div id="loader">
+    <div class="loader-title">USYEI MOMENTS LOADING</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+    <div class="loader-sub" id="loader-sub">Loading images…</div>
+  </div>
+
+  <!-- ── WEBGL CANVAS ───────────────────────────────────── -->
+  <canvas id="gl-canvas"></canvas>
+
+  <div id="hud">
+    <div class="scroll-hint">Scroll to explore</div>
+  </div>
+
+  <!-- HUD Elements -->
+
+  <div id="overlay">
+    <div id="overlay-inner">
+      <div id="overlay-img-wrap"><img id="overlay-img" src="" alt="" /></div>
+      <div id="overlay-text">
+        <p class="ov-eyebrow" id="ov-eyebrow"></p>
+        <h2 class="ov-title" id="ov-title"></h2>
+        <p class="ov-desc" id="ov-desc"></p>
+        <div class="ov-meta" id="ov-meta"></div>
+        <button id="ov-close">Close</button>
+      </div>
+    </div>
+  </div>
+  <button id="close-btn" aria-label="Close">×</button>
+
+  <button id="thumb-toggle">Browse</button>
+  <div id="thumb-panel">
+    <div style="padding: 22px 18px 14px; border-bottom: 1px solid rgba(255,255,255,.08);">
+      <h3 style="color:white; font-family:var(--font-display); font-size: 18px;">Image Library</h3>
+      <p id="panel-subtitle" style="color:rgba(255,255,255,0.4); font-size:10px;"></p>
+    </div>
+    <div id="thumb-grid"></div>
+  </div>
+
+  <footer class="site-footer">
+    &copy; 2026 Upshift Youth Empowerment Initiative. All rights reserved.
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    /* ======================================================
+       DATA
+    ====================================================== */
+    const IMAGES = [
+      { src: "upshift 1.jpeg", category: "Community",       title: "Community Outreach",       description: "Engaging with the local community." },
+      { src: "Upshift 2.jpeg", category: "Education",       title: "Learning Session",         description: "Students participating in a learning session." },
+      { src: "Upshift 3.jpeg", category: "Healthcare",      title: "Health Checkup",           description: "Providing basic health checkups." },
+      { src: "Upshift 4.jpeg", category: "Environment",     title: "Tree Planting",            description: "Volunteers planting trees for a greener environment." },
+      { src: "Upshift 5.jpeg", category: "Community",       title: "Group Activity",           description: "Collaborative group activity." },
+      { src: "Upshift 6.jpeg", category: "Education",       title: "Workshop",                 description: "Interactive workshop for skill development." },
+      { src: "Upshift 7.jpeg", category: "Healthcare",      title: "Medical Camp",             description: "Free medical camp for the community." },
+      { src: "Upshift 8.jpeg", category: "Environment",     title: "Clean-up Drive",           description: "Community clean-up initiative." },
+      { src: "Upshift 9.jpeg", category: "Community",       title: "Youth Gathering",          description: "Gathering of youth for empowerment programs." },
+      { src: "Upshift 10.jpeg", category: "Education",      title: "Mentorship Program",       description: "Mentors guiding young individuals." },
+      { src: "Upshift 11.jpeg", category: "Healthcare",     title: "Awareness Campaign",       description: "Health awareness campaign." },
+      { src: "Upshift 12.jpeg", category: "Environment",    title: "Recycling Initiative",     description: "Promoting recycling in the community." },
+      { src: "upshift leticia.png", category: "Community",  title: "Leticia's Story",          description: "A personal story of impact." },
+      { src: "marvin.PNG", category: "Education",           title: "Marvin's Class",           description: "Marvin leading an educational class." },
+      { src: "mission.png", category: "Community",          title: "Our Mission in Action",    description: "Bringing our mission to life." },
+      { src: "motivation.jpeg", category: "Education",      title: "Motivational Session",     description: "Boosting motivation among participants." },
+      { src: "nelson.jpg", category: "Community",           title: "Nelson's Leadership",      description: "Nelson demonstrating leadership." },
+      { src: "pret.PNG", category: "Education",             title: "Creative Arts",            description: "Children engaged in creative arts." },
+      { src: "story.jpeg", category: "Community",           title: "Impact Story",             description: "A story of change and impact." },
+      { src: "USYEI.PNG", category: "Operations",           title: "USYEI Logo",               description: "The official logo of USYEI." },
+      { src: "vision.jpeg", category: "Community",          title: "Our Vision",               description: "Working towards our organizational vision." },
+      { src: "WhatsApp Image 2026-04-03 at 09.51.15.jpeg", category: "Community", title: "Community Event", description: "A recent community event." }
+    ];
+
+    /* ======================================================
+       SHADERS
+    ====================================================== */
+    const VERT = `
+      #define PI 3.14159265359
+      attribute float aAngle; attribute float aHeight; attribute float aRadius;
+      attribute float aAspectRatio; attribute float aSpeed; attribute vec4 aTextureCoords;
+      varying vec4 vTextureCoords; varying vec2 vUv;
+      uniform float uMaxZ; uniform float uZrange; uniform float uScrollY; uniform float uSpeedY;
+      vec4 qFromAxis(vec3 axis, float angle) { float h = angle * 0.5; return vec4(axis * sin(h), cos(h)); }
+      void main() {
+        vec3 scaledPos = position; scaledPos.y /= aAspectRatio;
+        float zPos = aHeight + uScrollY; float minZ = uMaxZ - uZrange;
+        zPos = mod(zPos - minZ, uZrange) + minZ;
+        float theta = aAngle + uSpeedY * 0.4 * aSpeed;
+        vec3 iPos = vec3(cos(theta) * aRadius, zPos, sin(theta) * aRadius);
+        float angle = atan(iPos.x, iPos.z);
+        vec4 rot = qFromAxis(vec3(0.0,1.0,0.0), angle);
+        vec3 finalPos = scaledPos + 2.0 * cross(rot.xyz, cross(rot.xyz, scaledPos) + rot.w * scaledPos);
+        vec4 worldPos = modelMatrix * vec4(iPos + finalPos, 1.0);
+        gl_Position = projectionMatrix * viewMatrix * worldPos;
+        vUv = uv; vTextureCoords = aTextureCoords;
+      }`;
+
+    const FRAG = `
+      varying vec4 vTextureCoords; varying vec2 vUv; uniform sampler2D uAtlas;
+      void main() {
+        vec2 atlasUV;
+        atlasUV.x = mix(vTextureCoords.x, vTextureCoords.y, vUv.x);
+        atlasUV.y = mix(vTextureCoords.z, vTextureCoords.w, 1.0 - vUv.y);
+        gl_FragColor = texture2D(uAtlas, atlasUV);
+      }`;
+
+    const CV_VERT = `varying vec2 vUv; void main() { gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0); vUv = uv; }`;
+    const CV_FRAG = `
+      varying vec2 vUv; uniform sampler2D uAtlas; uniform vec4 uTextureCoords;
+      void main() {
+        vec2 uv;
+        uv.x = mix(uTextureCoords.x, uTextureCoords.y, vUv.x);
+        uv.y = mix(uTextureCoords.z, uTextureCoords.w, 1.0 - vUv.y);
+        gl_FragColor = texture2D(uAtlas, uv);
+      }`;
+
+    /* ======================================================
+       VORTEX GALLERY ENGINE
+    ====================================================== */
+    class VortexGallery {
+      constructor(canvas, imagesData, onProgress) {
+        this.canvas = canvas; this.imagesData = imagesData; this.onProgress = onProgress;
+        this.disposed = false; this.paused = false;
+        this.scrollY = { speedTarget:0, speedCurrent:0, target:0, current:0, direction:1 };
+        this.imageInfos = []; this.centerMesh = null; this.activeIndices = null;
+        this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(0xf7f4ef);
+        this.camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 200);
+        this.camera.position.z = 5;
+        this.renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+        this._setupEvents();
+        this.init();
+      }
+      async init() { await this._loadAtlas(this.imagesData); this._buildInstanced(); this._buildCenter(); this._render(); }
+      async _loadAtlas(data) {
+        const CELL_W = 256, CELL_H = 320, cols = Math.ceil(Math.sqrt(data.length)), rows = Math.ceil(data.length/cols);
+        const atlasW = cols * CELL_W, atlasH = rows * CELL_H, cvs = document.createElement('canvas');
+        cvs.width = atlasW; cvs.height = atlasH; const ctx = cvs.getContext('2d');
+        ctx.fillStyle = '#f7f4ef'; ctx.fillRect(0,0,atlasW,atlasH);
+        const images = await Promise.all(data.map((imgObj, i) => new Promise(res => {
+          const img = new Image(); img.onload = () => { this.onProgress((i+1)/data.length); res(img); };
+          img.onerror = () => { this.onProgress((i+1)/data.length); res(null); }; img.src = imgObj.src;
+        })));
+        this.imageInfos = images.map((img, i) => {
+          const col = i % cols, row = Math.floor(i/cols), destX = col * CELL_W, destY = row * CELL_H;
+          if (!img) return { uvs:{xStart:0,xEnd:0,yStart:0,yEnd:0}, ...data[i] };
+          const ia = img.width/img.height, ca = CELL_W/CELL_H;
+          let dw, dh, ox, oy;
+          if (ia > ca) { dw = CELL_W; dh = CELL_W/ia; ox = 0; oy = (CELL_H-dh)/2; }
+          else { dh = CELL_H; dw = CELL_H*ia; oy = 0; ox = (CELL_W-dw)/2; }
+          ctx.drawImage(img, destX+ox, destY+oy, dw, dh);
+          return { aspectRatio: ia, uvs: { xStart: (destX+ox)/atlasW, xEnd: (destX+ox+dw)/atlasW, yStart: 1-(destY+oy)/atlasH, yEnd: 1-(destY+oy+dh)/atlasH }, ...data[i] };
+        });
+        this.atlasTexture = new THREE.CanvasTexture(cvs);
+      }
+      _buildInstanced() {
+        const geo = new THREE.BoxGeometry(1.5, 1.5, 0.075), COUNT = 600, RADIUS = 6, HEIGHT = 120;
+        this.uZrange = HEIGHT; this.uMaxZ = HEIGHT/2; this.instanceCount = COUNT;
+        this.instancedMaterial = new THREE.ShaderMaterial({
+          vertexShader: VERT, fragmentShader: FRAG, transparent: true,
+          uniforms: { uAtlas:{value:this.atlasTexture}, uScrollY:{value:0}, uZrange:{value:HEIGHT}, uMaxZ:{value:HEIGHT/2}, uSpeedY:{value:0} }
+        });
+        const mesh = new THREE.InstancedMesh(geo, this.instancedMaterial, COUNT);
+        const aTC = new Float32Array(COUNT * 4), aAngles = new Float32Array(COUNT), aHeights = new Float32Array(COUNT), aRads = new Float32Array(COUNT), aAR = new Float32Array(COUNT), aSpeeds = new Float32Array(COUNT), aIdx = new Uint16Array(COUNT);
+        for(let i=0; i<COUNT; i++){
+          const imgIdx = Math.floor(Math.random()*this.imageInfos.length), info = this.imageInfos[imgIdx];
+          aTC.set([info.uvs.xStart, info.uvs.xEnd, info.uvs.yStart, info.uvs.yEnd], i*4);
+          aAngles[i] = (i/COUNT) * Math.PI * 2; aHeights[i] = (i % 40) * 3 - 60; aRads[i] = RADIUS;
+          aAR[i] = info.aspectRatio || 1; aSpeeds[i] = Math.random()*0.2+0.8; aIdx[i] = imgIdx;
+        }
+        this.instanceData = { angles: aAngles, heights: aHeights, radiuses: aRads, speeds: aSpeeds, imageIndices: aIdx };
+        geo.setAttribute('aAngle', new THREE.InstancedBufferAttribute(aAngles, 1));
+        geo.setAttribute('aHeight', new THREE.InstancedBufferAttribute(aHeights, 1));
+        geo.setAttribute('aRadius', new THREE.InstancedBufferAttribute(aRads, 1));
+        geo.setAttribute('aAspectRatio', new THREE.InstancedBufferAttribute(aAR, 1));
+        geo.setAttribute('aSpeed', new THREE.InstancedBufferAttribute(aSpeeds, 1));
+        geo.setAttribute('aTextureCoords', new THREE.InstancedBufferAttribute(aTC, 4));
+        this.instancedMesh = mesh; this.scene.add(mesh);
+      }
+      _buildCenter() {
+        const geo = new THREE.PlaneGeometry(1.7, 2.3);
+        this.centerMaterial = new THREE.ShaderMaterial({
+          vertexShader: CV_VERT, fragmentShader: CV_FRAG, transparent: true,
+          uniforms: { uAtlas:{value:this.atlasTexture}, uTextureCoords:{value:new THREE.Vector4(0,1,0,1)} }
+        });
+        this.centerMesh = new THREE.Mesh(geo, this.centerMaterial); this.scene.add(this.centerMesh);
+      }
+      _setupEvents() {
+        window.addEventListener('resize', () => {
+          this.camera.aspect = window.innerWidth / window.innerHeight; this.camera.updateProjectionMatrix();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        window.addEventListener('wheel', (e) => {
+          if(this.paused) return;
+          const delta = (e.deltaY * 0.01); this.scrollY.target += delta; this.scrollY.speedTarget += delta;
+          this.scrollY.direction = Math.sign(e.deltaY) || 1;
+        }, { passive: true });
+      }
+      _lerp(a, b, t) { return a + (b - a) * t; }
+      _render() {
+        if (this.disposed) return; requestAnimationFrame(() => this._render());
+        if (!this.paused) {
+          this.scrollY.target += 0.004 * this.scrollY.direction;
+          this.scrollY.current = this._lerp(this.scrollY.current, this.scrollY.target, 0.1);
+          this.scrollY.speedCurrent = this._lerp(this.scrollY.speedCurrent, this.scrollY.speedTarget, 0.1);
+        }
+        if (this.instancedMaterial) {
+          this.instancedMaterial.uniforms.uScrollY.value = this.scrollY.current;
+          this.instancedMaterial.uniforms.uSpeedY.value = this.scrollY.speedCurrent;
+        }
+        const navbar = document.getElementById('navbar'); if(navbar) navbar.classList.toggle('shrink', Math.abs(this.scrollY.current) > 2);
+        const pb = document.getElementById('progress-bar'); if(pb && this.uZrange) pb.style.width = ((Math.abs(this.scrollY.current) % this.uZrange) / this.uZrange * 100) + '%';
+        if (this.centerMaterial && this.imageInfos.length > 0) {
+          const validIndices = this.activeIndices || this.imageInfos.map((_, i) => i);
+          if (validIndices.length > 0) {
+            const idx = validIndices[Math.abs(Math.floor(this.scrollY.speedTarget)) % validIndices.length];
+            const uvs = this.imageInfos[idx].uvs;
+            this.centerMaterial.uniforms.uTextureCoords.value.set(uvs.xStart, uvs.xEnd, uvs.yStart, uvs.yEnd);
+            this.textureIndex = idx;
+          }
+        }
+        this.renderer.render(this.scene, this.camera);
+      }
+      filterByIndices(indices) {
+        this.activeIndices = (indices && indices.length > 0) ? indices : null;
+        if (!this.instanceData) return;
+        const geo = this.instancedMesh.geometry, aTC = new Float32Array(this.instanceCount * 4), validSet = new Set(this.activeIndices || this.imageInfos.map((_, i) => i));
+        for (let i = 0; i < this.instanceCount; i++) {
+          let imgIdx = this.instanceData.imageIndices[i];
+          if (!validSet.has(imgIdx)) imgIdx = Array.from(validSet)[Math.floor(Math.random()*validSet.size)];
+          const u = this.imageInfos[imgIdx].uvs; aTC.set([u.xStart, u.xEnd, u.yStart, u.yEnd], i*4);
+        }
+        geo.attributes.aTextureCoords.array = aTC; geo.attributes.aTextureCoords.needsUpdate = true;
+      }
+      pickAtScreen(x, y, rect) {
+        const ndcX = ((x - rect.left) / rect.width) * 2 - 1, ndcY = -(((y - rect.top) / rect.height) * 2 - 1);
+        const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+        if (this.centerMesh && ray.intersectObject(this.centerMesh).length > 0) return this.textureIndex;
+        return null;
+      }
+      setPaused(v) { this.paused = v; }
+    }
+
+    /* ======================================================
+       INITIALIZATION
+    ====================================================== */
+    let gallery = null;
+    function getFilteredIndices(cat) { return cat === 'All' ? null : IMAGES.reduce((acc, img, i) => { if (img.category === cat) acc.push(i); return acc; }, []); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('gl-canvas'), loader = document.getElementById('loader'), lBar = document.getElementById('loader-bar');
+      gallery = new VortexGallery(canvas, IMAGES, pct => {
+        if(lBar) lBar.style.width = (pct*100)+'%';
+        if(pct >= 1) setTimeout(() => loader.classList.add('done'), 500);
+      });
+
+      canvas.addEventListener('click', e => {
+        const idx = gallery.pickAtScreen(e.clientX, e.clientY, canvas.getBoundingClientRect());
+        if (idx !== null) showOverlay(idx);
+      });
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          gallery.filterByIndices(getFilteredIndices(btn.dataset.cat));
+        });
+      });
+
+      // Navbar Toggle
+      const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const total = document.body.scrollHeight - window.innerHeight;
+      bar.style.width = (window.scrollY / total * 100) + '%';
+    });
+  
+  
+  
+  
+  const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('shrink', window.scrollY > 60);
+    }, { passive: true });
+
+    // Hamburger
+    const toggle  = document.getElementById('navToggle');
+    const mobileM = document.getElementById('mobileMenu');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      mobileM.classList.toggle('open');
+    }, { passive: true });
+
+    mobileM.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (link.classList.contains('mobile-dropdown-toggle')) {
+          const content = link.nextElementSibling;
+          if (content) content.classList.toggle('open');
+        } else {
+          toggle.classList.remove('open');
+          mobileM.classList.remove('open');
+        }
+      });
+    });
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+  const isInsideNav = navbar.contains(e.target);
+  const isInsideMenu = mobileM.contains(e.target);
+
+  if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
+    toggle.classList.remove('open');
+    mobileM.classList.remove('open');
+  }
+}, { passive: true });
+
+
+      // Overlay functions
+      function showOverlay(idx) {
+        const img = IMAGES[idx]; if(!img) return;
+        document.getElementById('overlay-img').src = img.src;
+        document.getElementById('ov-eyebrow').textContent = img.category;
+        document.getElementById('ov-title').textContent = img.title;
+        document.getElementById('ov-desc').textContent = img.description;
+        document.getElementById('overlay').classList.add('open');
+        document.getElementById('close-btn').classList.add('visible');
+        gallery.setPaused(true);
+      }
+      function closeOverlay() {
+        document.getElementById('overlay').classList.remove('open');
+        document.getElementById('close-btn').classList.remove('visible');
+        gallery.setPaused(false);
+      }
+      document.getElementById('close-btn').addEventListener('click', closeOverlay);
+      document.getElementById('ov-close').addEventListener('click', closeOverlay);
+
+      // Thumbnail Panel
+      const thumbToggle = document.getElementById('thumb-toggle'), thumbPanel = document.getElementById('thumb-panel'), thumbGrid = document.getElementById('thumb-grid');
+      thumbToggle.addEventListener('click', () => {
+        thumbToggle.classList.toggle('open'); thumbPanel.classList.toggle('open');
+        if(thumbPanel.classList.contains('open')) buildThumbGrid();
+      });
+
+      function buildThumbGrid() {
+        thumbGrid.innerHTML = '';
+        IMAGES.forEach((img, i) => {
+          const div = document.createElement('div'); div.className = 'thumb-item';
+          div.innerHTML = `<img src="${img.src}" alt="${img.title}">`;
+          div.onclick = () => { showOverlay(i); thumbToggle.click(); };
+          thumbGrid.appendChild(div);
+        });
+        document.getElementById('panel-subtitle').textContent = IMAGES.length + " items in library";
+      }
+    });
+  </script>
+</body>
+</html>

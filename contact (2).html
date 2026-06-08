@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head><!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CKD1R97VVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CKD1R97VVB');
+</script>
   <meta charset="UTF-8" />
    <meta name="keywords" content="UPSHIFT, YOUTH, EMPOWERMENT, INITIATIVE, USYEI, Uganda, education, mentorship, creative innovation, Muvunyi Joseph" />
   <name="description" content="UPSHIFT YOUTH EMPOWERMENT INITIATIVE (USYEI) is a non-profit organization dedicated to empowering young people in Uganda through education, mentorship, and creative innovation." />
@@ -12,34 +20,66 @@
 
 </head>
 <body>
-
+<div id="progress-bar"></div>
+<!-- ── NAVBAR ───────────────── -->
+<div>
+  <div id="site-header">
+    <nav class="navbar" id="navbar">
+      <div class="navbar-left">
+        <a class="logo" href="index.html">
+          <img src="USYEI.PNG" alt="Upshift Youth Empowerment Initiative logo">
+        </a>
+        <a class="org-name" href="index.html">
+          USYEI
+          <p>Upshift Youth Empowerment Initiative</p>
+        </a>
+      </div>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+       <ul class="navlinks">
+        <li><a href="index.html"    class="navlink">Home</a></li>
+        <li><a href="About us.html" class="navlink">About Us</a></li>
+        <li><a href="programer.html" class="navlink">Programs</a></li>
+        <li><a href="gallery-vortex.html" class="navlink">Gallery</a></li>
+        <li><a href="contact (2).html"  class="navlink">Contact</a></li>
+        <li class="dropdown">
+          <a href="#" class="navlink cta-dropdown-trigger">Get Involved ▾</a>
+          <div class="dropdown-content">
+            <a href="donate.html">Support / Donate</a>
+            <a href="volunteer.html">Volunteer</a>
+          </div>
+        </li>
+      </ul>
+    </nav>i
+ <nav class="mobile-nav" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="About us.html">About Us</a>
+      <a href="programer.html">Programs</a>
+      <a href="gallery-vortex.html">Gallery</a>
+      <a href="contact (2).html">Contact</a>
+      <a href="donate.html">Support / Donate</a>
+      <a href="volunteer.html">Volunteer</a>
+    </nav>
+  </div>
   <!-- ── Hero Banner ── -->
   <section class="hero">
-    <img src="upshift leticia.png" alt="upshift youth empowerment inititiative" class="hero-bg"/>
+    <img src="upshift leticia.png" alt="upshift youth empowerment inititiative" class="hero-bg fade-in-up"/>
     <div class="hero-overlay">
-      <nav class="breadcrumb" style="font-weight:bold; font-size: 1em; ;">
-        <a href="index.html">
-          <svg class="home-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12L12 3l9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          </svg>
-          Home
-        </a>
-        <span class="sep"></span>
-        <span class="current">Contact Us</span>
-      </nav>
-      <h1 class="hero-title"><span>Contact Us</span></h1>
-      <p style="font-weight:bold ; font-size: 1em; color:white;">Reach out to us if you have anything you want to share with us</p>
+     
+      <h1 class="hero-title fade-in-up"><span>Contact Us</span></h1>
+      <p class="fade-in-up" style="font-weight:bold ; font-size: 1em; color:white;">Reach out to us if you have anything you want to share with us</p>
     </div>
   </section>
 
   <!-- ── Form Section ── -->
   <div class="page-body">
 
-    <div class="section-heading">
+    <div class="section-heading fade-in-up">
       <h2>Get In Touch</h2>
     </div>
 
-    <div class="contact-info" >
+    <div class="contact-info fade-in-up" >
       <p>P.O. Box 721312, Kampala, Uganda</p>
       <p>Email: <a href="mailto:upshiftyouth@gmail.com">upshiftyouth@gmail.com</a></p>
       <p>Tel: <a href="tel:+256755585111">(+256)765675742</a></p>
@@ -47,7 +87,7 @@
 <form id="form" action="https://api.web3forms.com/submit" method="POST">
   <input type="hidden" name="access_key" value="0e9f7b27-2dc8-4ae6-b25f-4b93d4f07645">
   
-  <div class="contact-card" id="contactform">
+  <div class="contact-card fade-in-up" id="contactform">
     <div class="form-grid">
 
       <div class="form-group">
@@ -91,62 +131,80 @@
         <!-- Changed type="button" to type="submit" -->
         <button class="btn-submit" type="submit" id="submitBtn">Submit</button>
       </div>
+      </div>
+      </div>
 
-    </div>
-  </div>
+      </form>
 
-</form>
+      <!-- Map Section -->
+      <section class="map-section">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.704251268305!2d32.5957523!3d0.2649574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177dbd4064a91e55%3A0xb4533826ee903970!2sUpshift%20Youth%20Empowerment%20Initiative!5e0!3m2!1sen!2sus!4v1717860000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+      </section>
+      <section class="footer">
 
-<section class="footer">
-  <div class="footer-container">
-    <!-- Organization Info -->
-    <div class="footer-about">
+      <div class="footer-container">
+      <!-- Organization Info -->
+      <div class="footer-about">
       <h3>Upshift Youth Empowerment Initiative</h3>
       <p>“Empowering voices, shaping future.”</p>
-    </div>
+      </div>
 
-    <!-- Quick Links -->
-       <div class="footer-links">
+      <!-- Quick Links -->
+      <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="upshift.html">Home</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="programs.html">Programs</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="About us.html">About Us</a></li>
+        <li><a href="programer.html">Programs</a> </li>
+        <li><a href="gallery-vortex.html">Gallery</a></li>
          <li><a href="contact (2).html">Contact</a></li>
         <li><a href="donate.html">Give Now</a></li>
       </ul>
-    </div>
+      </div>
 
-    <!-- Contact -->
-    <div class="footer-contact">
+
+      <!-- Contact -->
+      <div class="footer-contact">
       <h3>Contact Us</h3>
       <p>Email: <a href="mailto:Upshiftyouth@gmail.com">Upshiftyouth@gmail.com</a></p>
       <p>Phone: (+256)765675742</p>
-      <p>Address: Kampala, Uganda</p>
-      
-    </div>
+      <p>Address: Wampala, Buikwe, Uganda</p>
 
-    <!-- Social Media -->
-    <div class="footer-social">
+      </div>
+
+      <!-- Social Media -->
+      <div class="footer-social">
       <h3>Follow Us</h3>
       <div class="social-icons">
-        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://tiktok.com" target="_blank"><i class="fab fa-tiktok"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/search/top?q=upshift%20youth%20empowerment%20initiative" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/Upshiftyouths" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.instagram.com/upshiftyouths/" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@UpshiftYouthEmpowerment" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.tiktok.com/@upshiftyouths0" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/search/results/all/?keywords=upshift%20youth%20empowerment%20initiative&origin=RICH_QUERY_SUGGESTION&spellCorrectionEnabled=false&heroEntityKey=urn%3Ali%3Aorganization%3A106165899&position=0" target="_blank"><i class="fab fa-linkedin-in"></i></a>
       </div>
-    </div>
-  </div>
+      </div>
+      </div>
 
-  <!-- Copyright -->
-  <div class="footer-bottom">
-    <p>© 2026 Upshift Youth Empowerment Initiative. All rights reserved.</p>
-  </div>
-</section>
-</form>
-</body>
+      <!-- Copyright -->
+      <div class="footer-bottom">
+      <p>© 2026 Upshift Youth Empowerment Initiative. All rights reserved.</p>
+      </div>
+      </section>
 
-</body>
-</html>
+      <script>
+        // Staggered Animation Observer
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                entry.target.classList.add('animate');
+              }, index * 150); // Stagger delay
+            }
+          });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in-up').forEach((el) => observer.observe(el));
+      </script>
+      </body>
+      </html>

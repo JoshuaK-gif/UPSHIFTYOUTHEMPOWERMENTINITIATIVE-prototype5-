@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CKD1R97VVB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CKD1R97VVB');
+</script>
   <meta charset="UTF-8" />
   <meta name="description" content="UPSHIFT YOUTH EMPOWERMENT INITIATIVE (USYEI) is a non-profit organization dedicated to empowering young people in Uganda through education, mentorship, and creative innovation." />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="keywords" content="UPSHIFT, YOUTH, EMPOWERMENT, INITIATIVE, USYEI, Uganda, education, mentorship, creative innovation, Muvunyi Joseph" />
-  <title>UPSHIFT YOUTH EMPOWERMENT INITIATIVE-USYEI</title>
+  <title>Upshift Youth Empowerment Initiative-USYEI</title>
+  <meta property="og:title" content="Upshift Youth Empowerment Initiative">
+<meta property="og:description" content="Empowering youth through education, health, and opportunity.">
+<meta property="og:image" content="https://upshiftyouth.org/images/preview.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://upshiftyouth.org">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Upshift Youth Empowerment Initiative">
+<meta name="twitter:description" content="Empowering youth through education, health, and opportunity.">
+<meta name="twitter:image" content="https://upshiftyouth.org/images/preview.png">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>  
@@ -13,6 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css">
 <script src="script.js" defer></script>
+
 </head>
 <body>
 <div id="progress-bar"></div>
@@ -21,10 +43,10 @@
   <div id="site-header">
     <nav class="navbar" id="navbar">
       <div class="navbar-left">
-        <a class="logo" href="#top.html">
+        <a class="logo" href="index.html">
           <img src="USYEI.PNG" alt="Upshift Youth Empowerment Initiative logo">
         </a>
-        <a class="org-name" href="#top.html">
+        <a class="org-name" href="index.html">
           USYEI
           <p>Upshift Youth Empowerment Initiative</p>
         </a>
@@ -34,18 +56,32 @@
       </button>
        <ul class="navlinks">
         <li><a href="index.html"    class="navlink">Home</a></li>
-        <li><a href="About us.html" class="navlink">About Us</a></li>
+        <li><a href="About us.html"    class="navlink">About Us</a></li>
         <li><a href="programer.html" class="navlink">Programs</a></li>
+        <li><a href="gallery-vortex.html"  class="navlink">Gallery</a></li>
         <li><a href="contact (2).html"  class="navlink">Contact</a></li>
-        <li><a href="donate.html" class="navlink">Support</a></li>
+        <li class="dropdown">
+          <a href="#" class="navlink cta-dropdown-trigger">Get Involved ▾</a>
+          <div class="dropdown-content">
+            <a href="donate.html">Support / Donate</a>
+            <a href="volunteer.html">Volunteer</a>
+          </div>
+        </li>
       </ul>
     </nav>
  <nav class="mobile-nav" id="mobileMenu">
       <a href="index.html">Home</a>
       <a href="About us.html">About Us</a>
       <a href="programer.html">Programs</a>
+      <a href="gallery-vortex.html">Gallery</a>
       <a href="contact (2).html">Contact</a>
-      <a href="donate.html">Support</a>
+      <div class="mobile-dropdown">
+        <a href="javascript:void(0)" class="mobile-dropdown-toggle">Get Involved ▾</a>
+        <div class="mobile-dropdown-content">
+          <a href="donate.html">Support / Donate</a>
+          <a href="volunteer.html">Volunteer</a>
+        </div>
+      </div>
     </nav>
   </div>
 </div> <!-- HERO SECTION -->
@@ -58,7 +94,7 @@
     <div class="slide" style="background-image:url('Upshift 52.jpeg') ;">  </div>
 </div>
     <div class="hero__content">
-      <div class="hero__tag">Empowering Uganda's Next Generation</div>
+      <div class="hero__tag">Investing in young people in Rural Uganda to Break the Cycle of Poverty</div>
 <h1 class="hero__title">
         <span class="line line--combined"><span class="line--red">UPSHIFT</span> <span class="line--gold">YOUTH</span></span>
         <span class="line line--white">EMPOWERMENT</span>
@@ -90,13 +126,15 @@
   </blockquote>
   <p class="quote-source" style="color:rgb(5, 40, 196)" ><strong> Upshift Youth Empowerment Initiative </strong></p>
 </div>
- <section class="programs">
+ <section class="programs reveal-on-scroll">
    <!-- Header -->
     <div class="programs__header">
-      <h2 class="programs__title">Our programs</h2>
+      <h2 class="programs__title">Partner With Us</h2>
       <p class="programs__subtitle">
-        USYEI empowers children and youth in rural communities through integrated programs in health awareness, education and livelihoods, creating pathways to resilience, opportunity, and long-term wellbeing.
-      </p>
+        At Upshift Youth Empowerment Initiative, we believe that where a child is born should never determine the limits of their future.
+        </p><Span id="paragraph"><p><strong>We invest in children and youth in rural communities through programs that provide education support, life skills, mentorship, and opportunities.<br> From early development to livelihood readiness, we walk with them as they grow into confident, independent, and empowered individuals.</strong></p></Span>
+      
+
     </div>
  <!-- Body -->
     <div class="programs__body">
@@ -109,9 +147,9 @@
 <!-- Card 2: Partner with us ---> 
         <a href="#partner" class="program-card">
           <div class="program-card__text">
-            <div class="program-card__title">Daily Motivation - Muvunyi Joseph</div>
+            <div class="program-card__title">Daily Motivation - Muvunyi Joseph(Founder) </div>
             <div class="program-card__desc">
-              Every day, we are creating opportunities, restoring hope, and building brighter futures for children and youth in our communities.
+              Each day, we work to expand opportunities, restore hope, and empower children and youth to realize their full potential and shape a better future
              </div>
           </div>
         </a>
@@ -179,7 +217,7 @@
 <div class="mv-wrapper">
 
   <!---- MISSION -->
-  <div class="mv-card mission">
+  <div class="mv-card mission reveal-on-scroll">
     <div class="card-badge"><span class="badge-dot"></span>Our Mission</div>
     <h3>Empowering Youth<br>to <em>Take Action</em></h3>
     <div class="card-divider"></div>
@@ -188,7 +226,7 @@
   </div>
 
  <!-- - VISION --->
-  <div class="mv-card vision">
+  <div class="mv-card vision reveal-on-scroll">
     <div class="card-badge"><span class="badge-dot"></span>Our Vision</div>
     <h3>A Uganda Where <em>Every</em><br>Young Person Thrives</h3>
     <div class="card-divider"></div>
@@ -210,12 +248,12 @@
     <div class="carousel-wrap">
       <button class="nav-btn" id="btnPrev">&#8592;</button>
 
-      <div class="card-stage" id="cardStage">
+      <div class="card-stage reveal-on-scroll" id="cardStage">
         <div class="help-card" id="hc0">
           <div class="help-icon"><i class="fas fa-child"></i></div>
           <h3>Donate To Us</h3>
           <p>Help provide education, nutritious meals, and mentorship to the young people in need. Your monthly support transforms lives and builds brighter futures.</p>
-          <a href="contact (2).html " class="help-link">Get Started &#8594;</a>
+          <a href="donate.html " class="help-link">Get Started &#8594;</a>
         </div>
         <div class="help-card" id="hc1">
           <div class="help-icon"><i class="fas fa-building"></i></div>
@@ -227,7 +265,7 @@
           <div class="help-icon"><i class="fas fa-hands-helping"></i></div>
           <h3>Volunteer with USYEI</h3>
           <p>There are many opportunities to get involved directly from teaching and mentoring to event support.</p>
-          <a href="contact (2).html" class="help-link">Join Us &#8594;</a>
+          <a href="volunteer.html" class="help-link">Join Us &#8594;</a>
         </div>
       </div>
 
@@ -256,9 +294,10 @@
     <div class="footer-links">
       <h3>Quick Links</h3>
       <ul>
-        <li><a href="#.html">Home</a></li>
-        <li><a href="about.html">About Us</a></li>
-        <li><a href="usyei_combined (2).html">Programs</a> </li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="About us.html">About Us</a></li>
+        <li><a href="programer.html">Programs</a> </li>
+        <li><a href="gallery-vortex.html">Gallery</a></li>
          <li><a href="contact (2).html">Contact</a></li>
         <li><a href="donate.html">Give Now</a></li>
       </ul>
@@ -278,12 +317,12 @@
     <div class="footer-social">
       <h3>Follow Us</h3>
       <div class="social-icons">
-        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://tiktok.com" target="_blank"><i class="fab fa-tiktok"></i></a>
-            <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.facebook.com/search/top?q=upshift%20youth%20empowerment%20initiative" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/Upshiftyouths" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.instagram.com/upshiftyouths/" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@UpshiftYouthEmpowerment" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.tiktok.com/@upshiftyouths0" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.linkedin.com/search/results/all/?keywords=upshift%20youth%20empowerment%20initiative&origin=RICH_QUERY_SUGGESTION&spellCorrectionEnabled=false&heroEntityKey=urn%3Ali%3Aorganization%3A106165899&position=0" target="_blank"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </div>
@@ -294,4 +333,8 @@
   </div>
 </section>
 </body>
+</html>
+/body>
+</html>
+/body>
 </html>

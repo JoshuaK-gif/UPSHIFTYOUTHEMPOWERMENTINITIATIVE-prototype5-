@@ -22,12 +22,26 @@
     }, { passive: true });
 
     mobileM.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        toggle.classList.remove('open');
-        mobileM.classList.remove('open');
+      link.addEventListener('click', (e) => {
+        if (link.classList.contains('mobile-dropdown-toggle')) {
+          const content = link.nextElementSibling;
+          if (content) content.classList.toggle('open');
+        } else {
+          toggle.classList.remove('open');
+          mobileM.classList.remove('open');
+        }
       });
-    }, { passive: true });
+    });
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+  const isInsideNav = navbar.contains(e.target);
+  const isInsideMenu = mobileM.contains(e.target);
 
+  if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
+    toggle.classList.remove('open');
+    mobileM.classList.remove('open');
+  }
+}, { passive: true });
 
 
     
@@ -86,9 +100,10 @@
     });
 
 
-        const slides = document.querySelectorAll('.slide');
+    const slides = document.querySelectorAll('.slide');
     const indicators = document.querySelectorAll('.indicator');
     const DURATION = 5000;
+    let slideIndex = 0;
 
     function resetBar(index) {
       const fill = indicators[index].querySelector('.indicator__fill');
@@ -105,13 +120,13 @@
     }
 
     function goTo(next) {
-      const prev = current;
-      current = ((next % slides.length) + slides.length) % slides.length;
+      const prev = slideIndex;
+      slideIndex = ((next % slides.length) + slides.length) % slides.length;
 
       // Same push style for all slides
       slides[prev].classList.remove('active');
       slides[prev].classList.add('exit');
-      slides[current].classList.add('active');
+      slides[slideIndex].classList.add('active');
 
       setTimeout(() => {
         slides[prev].classList.remove('exit');
@@ -120,24 +135,24 @@
       // Indicators
       indicators[prev].classList.remove('active');
       resetBar(prev);
-      indicators[current].classList.add('active');
-      startBar(current);
+      indicators[slideIndex].classList.add('active');
+      startBar(slideIndex);
     }
 
     // Dot click
     indicators.forEach((dot, i) => {
       dot.addEventListener('click', () => {
-        if (i === current) return;
+        if (i === slideIndex) return;
         clearInterval(timer);
         goTo(i);
-        timer = setInterval(() => goTo(current + 1), DURATION);
+        timer = setInterval(() => goTo(slideIndex + 1), DURATION);
       });
     });
 
     // Start first bar
     startBar(0);
 
-    let timer = setInterval(() => goTo(current + 1), DURATION);   
+    let timer = setInterval(() => goTo(slideIndex + 1), DURATION);   
 
     //button functions start here
   function toggleReadMore(event){
