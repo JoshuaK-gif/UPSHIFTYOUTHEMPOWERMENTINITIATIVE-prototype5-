@@ -1,49 +1,51 @@
- const bar = document.getElementById('progress-bar');
-    window.addEventListener('scroll', () => {
-      const total = document.body.scrollHeight - window.innerHeight;
-      bar.style.width = (window.scrollY / total * 100) + '%';
-    });
-  
-  
-  
-  
-  const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('shrink', window.scrollY > 60);
-    }, { passive: true });
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  bar.style.width = (window.scrollY / total * 100) + '%';
+});
 
-    // Hamburger
-    const toggle  = document.getElementById('navToggle');
-    const mobileM = document.getElementById('mobileMenu');
+const navbar  = document.getElementById('navbar');
+const toggle  = document.getElementById('navToggle');
+const mobileM = document.getElementById('mobileMenu');
+const getInvolvedToggle  = document.getElementById('mobileGetInvolved');
+const getInvolvedContent = document.getElementById('mobileGetInvolvedContent');
 
-    toggle.addEventListener('click', () => {
-      toggle.classList.toggle('open');
-      mobileM.classList.toggle('open');
-    }, { passive: true });
-
-    mobileM.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        if (link.classList.contains('mobile-dropdown-toggle')) {
-          const content = link.nextElementSibling;
-          if (content) content.classList.toggle('open');
-        } else {
-          toggle.classList.remove('open');
-          mobileM.classList.remove('open');
-        }
-      });
-    });
-// Close mobile menu when clicking outside
-document.addEventListener('click', (e) => {
-  const isInsideNav = navbar.contains(e.target);
-  const isInsideMenu = mobileM.contains(e.target);
-
-  if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
-    toggle.classList.remove('open');
-    mobileM.classList.remove('open');
-  }
+// Shrink navbar on scroll
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('shrink', window.scrollY > 60);
 }, { passive: true });
 
+// Hamburger open/close
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('open');
+  mobileM.classList.toggle('open');
+});
 
+// Get Involved dropdown toggle
+getInvolvedToggle.addEventListener('click', () => {
+  getInvolvedToggle.classList.toggle('open');
+  getInvolvedContent.classList.toggle('open');
+});
+
+// Close menu when a regular link (not the dropdown toggle) is clicked
+mobileM.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    toggle.classList.remove('open');
+    mobileM.classList.remove('open');
+    getInvolvedToggle.classList.remove('open');
+    getInvolvedContent.classList.remove('open');
+  });
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  if (!navbar.contains(e.target) && !mobileM.contains(e.target)) {
+    toggle.classList.remove('open');
+    mobileM.classList.remove('open');
+    getInvolvedToggle.classList.remove('open');
+    getInvolvedContent.classList.remove('open');
+  }
+}, { passive: true });
 
 
 

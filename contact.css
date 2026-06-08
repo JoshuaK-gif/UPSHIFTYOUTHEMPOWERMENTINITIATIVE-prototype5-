@@ -51,6 +51,48 @@ a { text-decoration: none; color: inherit; }
 /* ══════════════════════════════════════════════════════════
    NAVBAR
 ══════════════════════════════════════════════════════════ */
+/* mobile dropdown */
+.mobile-dropdown {
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.mobile-dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: color .25s;
+}
+.mobile-dropdown-toggle:hover { color: var(--blue); }
+.mobile-dropdown-toggle .arrow {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.mobile-dropdown-toggle.open .arrow { transform: rotate(180deg); }
+
+.mobile-dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+}
+.mobile-dropdown-content.open { max-height: 200px; }
+.mobile-dropdown-content a {
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  border-bottom: 1px solid rgba(0,0,0,.04);
+  transition: color .25s;
+}
+.mobile-dropdown-content a:last-child { border-bottom: none; }
+.mobile-dropdown-content a:hover { color: var(--blue); }
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--blue-light); }
@@ -238,6 +280,42 @@ backdrop-filter: blur(10px);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 13px 0;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+.mobile-dropdown-toggle:hover { color: var(--blue); }
+
+/* ── MOBILE CTA BUTTON ── */
+.mobile-nav .mobile-cta {
+  margin-top: 16px;
+  background: var(--blue);
+  color: var(--white) !important;
+  text-align: center;
+  border-radius: 99px;
+  padding: 12px 24px !important;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(71,184,224,.35);
+  border-bottom: none !important;
+  transition: background .3s !important;
+}
+.mobile-nav .mobile-cta:hover { background: var(--blue-dark) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE NAV
+══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar { padding: 0 20px; height: 60px; }
+  .logo img { height: 44px; }
+  .navlinks { display: none; }
+  .nav-toggle { display: flex; }
+}
+@media (max-width: 480px) {
+  .navbar { padding: 0 16px; }
 }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -737,3 +815,55 @@ backdrop-filter: blur(10px);
   font-size: 14px;
 }
 
+
+
+/* ══════════════════════════════════════════════════════════
+   PASTE THIS SCRIPT INTO YOUR CONTACT HTML  <script> TAG
+   (if not already present)
+══════════════════════════════════════════════════════════
+
+  const navbar    = document.getElementById('navbar');
+  const toggle    = document.getElementById('navToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const bar       = document.getElementById('progress-bar');
+
+  // Shrink navbar + progress bar on scroll
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('shrink', window.scrollY > 60);
+    if (bar) {
+      const total = document.body.scrollHeight - window.innerHeight;
+      bar.style.width = (window.scrollY / total * 100) + '%';
+    }
+  }, { passive: true });
+
+  // Hamburger open/close
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+
+  // Close menu when a link is clicked
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      if (link.classList.contains('mobile-dropdown-toggle')) {
+        const content = link.nextElementSibling;
+        if (content) {
+          link.classList.toggle('open');
+          content.classList.toggle('open');
+        }
+      } else {
+        toggle.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      }
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!navbar.contains(e.target) && !mobileMenu.contains(e.target)) {
+      toggle.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+  }, { passive: true });
+
+*/
