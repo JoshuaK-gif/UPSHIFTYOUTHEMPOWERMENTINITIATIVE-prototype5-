@@ -733,6 +733,21 @@ a { text-decoration: none; color: inherit; }
           const delta = (e.deltaY * 0.01); this.scrollY.target += delta; this.scrollY.speedTarget += delta;
           this.scrollY.direction = Math.sign(e.deltaY) || 1;
         }, { passive: true });
+
+        /* ── TOUCH SCROLL (mobile vortex spin) ── */
+        let _touchY = 0;
+        this.canvas.addEventListener('touchstart', (e) => {
+          _touchY = e.touches[0].clientY;
+        }, { passive: true });
+        this.canvas.addEventListener('touchmove', (e) => {
+          if (this.paused) return;
+          const dy = _touchY - e.touches[0].clientY;
+          _touchY = e.touches[0].clientY;
+          const delta = dy * 0.025;
+          this.scrollY.target += delta;
+          this.scrollY.speedTarget += delta;
+          this.scrollY.direction = Math.sign(dy) || 1;
+        }, { passive: true });
       }
       _lerp(a, b, t) { return a + (b - a) * t; }
       _render() {
@@ -792,10 +807,24 @@ a { text-decoration: none; color: inherit; }
         if(pct >= 1) setTimeout(() => loader.classList.add('done'), 500);
       });
 
-      canvas.addEventListener('click', e => {
-        const idx = gallery.pickAtScreen(e.clientX, e.clientY, canvas.getBoundingClientRect());
-        if (idx !== null) showOverlay(idx);
+      /* ── DESKTOP: click anywhere on canvas ── */
+      canvas.addEventListener('click', () => {
+        if (gallery.textureIndex != null) showOverlay(gallery.textureIndex);
       });
+
+      /* ── MOBILE: tap to open overlay (distinguishes swipe vs tap) ── */
+      let _tapX = 0, _tapY = 0;
+      canvas.addEventListener('touchstart', (e) => {
+        _tapX = e.touches[0].clientX;
+        _tapY = e.touches[0].clientY;
+      }, { passive: true });
+      canvas.addEventListener('touchend', (e) => {
+        const dx = Math.abs(e.changedTouches[0].clientX - _tapX);
+        const dy = Math.abs(e.changedTouches[0].clientY - _tapY);
+        if (dx < 10 && dy < 10 && gallery.textureIndex != null) {
+          showOverlay(gallery.textureIndex);
+        }
+      }, { passive: true });
 
       document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
