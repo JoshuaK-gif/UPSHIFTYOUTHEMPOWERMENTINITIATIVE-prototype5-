@@ -125,6 +125,12 @@ a { text-decoration: none; color: inherit; }
   top: 0px;
   z-index: 1000;
   width: 100%;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+#site-header.hidden {
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
 }
 .navbar {
   display: flex;
@@ -1025,12 +1031,14 @@ document.addEventListener('click', (e) => {
 
         document.getElementById('overlay').classList.add('open');
         document.getElementById('close-btn').classList.add('visible');
+        document.getElementById('site-header').classList.add('hidden');
         gallery.setPaused(true);
       }
 
       function closeOverlay() {
         document.getElementById('overlay').classList.remove('open');
         document.getElementById('close-btn').classList.remove('visible');
+        document.getElementById('site-header').classList.remove('hidden');
         document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('selected'));
         currentOverlayIdx = null;
         gallery.setPaused(false);
