@@ -428,17 +428,21 @@ a { text-decoration: none; color: inherit; }
     }
     #overlay.open #overlay-inner { transform: scale(1); }
     #overlay-img {
-      display: block; max-width: 100%; max-height: calc(100vh - 120px);
-      object-fit: contain; box-shadow: 0 50px 120px rgba(0,0,0,.6);
+      display: block; width: 100%; max-height: calc(100vh - 120px);
+      object-fit: contain; object-position: center;
+      box-shadow: 0 50px 120px rgba(0,0,0,.6);
       border-radius: 4px;
     }
-    /* Small image preview shown ONLY in the description panel (always visible on mobile,
-       hidden on desktop where the large image column already shows it) */
     #ov-img-preview {
       display: none;
-      width: 100%; max-height: 52vw; object-fit: cover;
-      border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      width: 100%;
+      max-height: 60vh;
+      object-fit: contain;
+      object-position: center;
+      border-radius: 6px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
       flex-shrink: 0;
+      background: rgba(0,0,0,.15);
     }
     #overlay-text {
       color: var(--paper); display: flex; flex-direction: column; gap: 18px;
@@ -486,21 +490,64 @@ a { text-decoration: none; color: inherit; }
 
     /* ── RESPONSIVE OVERLAY ── */
     @media (max-width: 768px) {
-      #overlay { padding: 0; align-items: flex-end; }
+      #overlay {
+        padding: 0;
+        align-items: stretch;
+        overflow: hidden;
+      }
       #overlay-inner {
-        grid-template-columns: 1fr; gap: 0;
-        max-height: 100dvh; overflow-y: auto;
-        border-radius: 16px 16px 0 0;
+        grid-template-columns: 1fr;
+        gap: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
         background: rgba(14,12,10,0.97);
+        border-radius: 0;
+        overflow: hidden;
       }
       #overlay-img-wrap { display: none; }   /* hide large left image on mobile */
-      #ov-img-preview { display: block; }    /* show compact preview inside text panel */
-      #overlay-text {
-        max-height: none; padding: 20px 22px 32px; gap: 14px;
+      #ov-img-preview {
+        display: block;
+        width: 100%;
+        /* Take up to 55% of screen height — enough to show the full image */
+        height: 55dvh;
+        max-height: 55dvh;
+        object-fit: contain;
+        object-position: center;
+        flex-shrink: 0;
+        background: rgba(0,0,0,0.3);
+        border-radius: 0;
+        box-shadow: none;
       }
-      .ov-title { font-size: clamp(22px, 6vw, 28px); }
-      .ov-desc { font-size: 15px; }
-      #close-btn { top: 14px; right: 16px; }
+      #overlay-text {
+        flex: 1;
+        max-height: none;
+        overflow-y: auto;
+        padding: 16px 20px 28px;
+        gap: 12px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .ov-title { font-size: clamp(20px, 5.5vw, 26px); }
+      .ov-desc { font-size: 14px; line-height: 1.6; }
+      .ov-meta { font-size: 10px; }
+      #close-btn { top: 10px; right: 14px; }
+    }
+
+    @media (max-width: 480px) {
+      #ov-img-preview {
+        height: 50dvh;
+        max-height: 50dvh;
+      }
+      #overlay-text {
+        padding: 14px 16px 24px;
+        gap: 10px;
+      }
+      .ov-title { font-size: clamp(18px, 5vw, 22px); }
+      .ov-desc { font-size: 13px; }
+      .ov-actions { gap: 8px; }
+      .ov-nav-btn, #ov-close { padding: 8px 14px; font-size: 10px; }
     }
 
     #loader {
