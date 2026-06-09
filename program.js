@@ -1,194 +1,195 @@
- 
- const bar = document.getElementById('progress-bar');
-    window.addEventListener('scroll', () => {
-      const total = document.body.scrollHeight - window.innerHeight;
-      bar.style.width = (window.scrollY / total * 100) + '%';
-    });
-  
-  
-  
-  
-  const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('shrink', window.scrollY > 60);
-    }, { passive: true });
+/**
+ * program.js - USYEI "What We Do" Page
+ * Refactored to avoid collisions and provide smoother animations.
+ */
 
-    // Hamburger
-    const toggle  = document.getElementById('navToggle');
+(function () {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // ─── 1. NAVBAR & PROGRESS BAR ──────────────────────────────────────────
+    // Note: We keep these if this page doesn't load script.js
+    const navbar = document.getElementById('navbar');
+    const bar = document.getElementById('progress-bar');
+    
+    let ticking = false;
+
+    function handleScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+
+          if (navbar) {
+            navbar.classList.toggle('shrink', scrollY > 60);
+          }
+
+          if (bar) {
+            const total = document.body.scrollHeight - window.innerHeight;
+            if (total > 0) {
+              bar.style.width = (scrollY / total * 100) + '%';
+            }
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // ─── 2. MOBILE MENU / HAMBURGER ────────────────────────────────────────
+    const toggle = document.getElementById('navToggle');
     const mobileM = document.getElementById('mobileMenu');
 
-    toggle.addEventListener('click', () => {
-      toggle.classList.toggle('open');
-      mobileM.classList.toggle('open');
-    }, { passive: true });
+    if (toggle && mobileM) {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('open');
+        mobileM.classList.toggle('open');
+      }, { passive: true });
 
-    mobileM.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', (e) => {
-        if (link.classList.contains('mobile-dropdown-toggle')) {
-          const content = link.nextElementSibling;
-          if (content) content.classList.toggle('open');
-        } else {
+      mobileM.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          if (link.classList.contains('mobile-dropdown-toggle')) {
+            const content = link.nextElementSibling;
+            if (content) content.classList.toggle('open');
+          } else {
+            toggle.classList.remove('open');
+            mobileM.classList.remove('open');
+          }
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        const isInsideNav = navbar && navbar.contains(e.target);
+        const isInsideMenu = mobileM.contains(e.target);
+
+        if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
           toggle.classList.remove('open');
           mobileM.classList.remove('open');
         }
-      });
-    });
-// Close mobile menu when clicking outside
-document.addEventListener('click', (e) => {
-  const isInsideNav = navbar.contains(e.target);
-  const isInsideMenu = mobileM.contains(e.target);
+      }, { passive: true });
+    }
 
-  if (!isInsideNav && !isInsideMenu && mobileM.classList.contains('open')) {
-    toggle.classList.remove('open');
-    mobileM.classList.remove('open');
-  }
-}, { passive: true });
-
-
-
-    // Scroll reveal
+    // ─── 3. SCROLL REVEAL (Consolidated) ───────────────────────────────────
     const reveals = document.querySelectorAll('.reveal');
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          obs.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => obs.observe(el));
+    if (reveals.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
 
-
-  (function () {
-    var slideshow = document.getElementById('danceSlideshow');
-    if (!slideshow) return;
-
-    var slides  = slideshow.querySelectorAll('.slide');
-    var dots    = document.querySelectorAll('#slideDots .dot');
-    var btnPrev = document.getElementById('slidePrev');
-    var btnNext = document.getElementById('slideNext');
-    var current = 0;
-    var timer;
-
-    function goTo(index) {
-      slides[current].classList.remove('active');
-      slides[current].classList.add('exit');
-      dots[current].classList.remove('active');
-
-      // clean up exit class after transition finishes
-      (function (old) {
-        setTimeout(function () {
-          slides[old].classList.remove('exit');
-        }, 750);
-      })(current);
-
-      current = (index + slides.length) % slides.length;
-      slides[current].classList.add('active');
-      dots[current].classList.add('active');
+      reveals.forEach(el => observer.observe(el));
     }
 
-    function startTimer() {
-      clearInterval(timer);
-      timer = setInterval(function () { goTo(current + 1); }, 5000);
-    }
+    // ─── 4. DANCE SLIDESHOW ────────────────────────────────────────────────
+    const slideshow = document.getElementById('danceSlideshow');
+    if (slideshow) {
+      const slides = slideshow.querySelectorAll('.slide');
+      const dots = document.querySelectorAll('#slideDots .dot');
+      const btnPrev = document.getElementById('slidePrev');
+      const btnNext = document.getElementById('slideNext');
+      const SLIDE_PAUSE = 6000; // Slower automatic transition
+      let currentIdx = 0;
+      let slideTimer = null;
 
-    if (btnPrev) {
-      btnPrev.addEventListener('click', function () { goTo(current - 1); startTimer(); });
-    }
-    if (btnNext) {
-      btnNext.addEventListener('click', function () { goTo(current + 1); startTimer(); });
-    }
+      const goToSlide = (index) => {
+        slides[currentIdx].classList.remove('active');
+        slides[currentIdx].classList.add('exit');
+        if (dots[currentIdx]) dots[currentIdx].classList.remove('active');
 
-    dots.forEach(function (dot) {
-      dot.addEventListener('click', function () {
-        goTo(parseInt(this.getAttribute('data-index'), 10));
-        startTimer();
-      });
-    });
+        // Clean up exit class after transition finishes (matches CSS duration)
+        const oldIdx = currentIdx;
+        setTimeout(() => {
+          slides[oldIdx].classList.remove('exit');
+        }, 1500); // Matches slower 1.4s transition
 
-    /* touch swipe support for iOS */
-    var touchStartX = 0;
-    slideshow.addEventListener('touchstart', function (e) {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    slideshow.addEventListener('touchend', function (e) {
-      var diff = touchStartX - e.changedTouches[0].screenX;
-      if (Math.abs(diff) > 40) {
-        goTo(diff > 0 ? current + 1 : current - 1);
-        startTimer();
+        currentIdx = (index + slides.length) % slides.length;
+        slides[currentIdx].classList.add('active');
+        if (dots[currentIdx]) dots[currentIdx].classList.add('active');
+      };
+
+      const startSlideTimer = () => {
+        clearInterval(slideTimer);
+        slideTimer = setInterval(() => { goToSlide(currentIdx + 1); }, SLIDE_PAUSE);
+      };
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => { goToSlide(currentIdx - 1); startSlideTimer(); });
       }
-    }, { passive: true });
+      if (btnNext) {
+        btnNext.addEventListener('click', () => { goToSlide(currentIdx + 1); startSlideTimer(); });
+      }
 
-    startTimer();
-  })();
-
-  /* ── SCROLL REVEAL ── */
-  (function () {
-    var els = document.querySelectorAll('.reveal');
-    if (!els.length) return;
-
-    // Skip on touch devices (iPhones, iPads). CSS already shows
-    // content normally there — no animation, no opacity:0 risk.
-    var isTouch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (isTouch || !('IntersectionObserver' in window)) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
+      dots.forEach((dot) => {
+        dot.addEventListener('click', function () {
+          const idx = parseInt(this.getAttribute('data-index'), 10);
+          if (!isNaN(idx)) {
+            goToSlide(idx);
+            startSlideTimer();
+          }
+        });
       });
-    }, { threshold: 0 });
 
-    els.forEach(function (el) { observer.observe(el); });
-  })();
+      // Touch support
+      let touchStartX = 0;
+      slideshow.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      slideshow.addEventListener('touchend', (e) => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 40) {
+          goToSlide(diff > 0 ? currentIdx + 1 : currentIdx - 1);
+          startSlideTimer();
+        }
+      }, { passive: true });
 
-  /* ── READ MORE TOGGLE (stub — replace with your real function) ── */
-  function toggleReadMore5(e) {
-    e.preventDefault();
-    var extra = document.getElementById('approach');
-    var btn   = document.getElementById('bttnapproach');
-    if (!extra) return;
-    if (extra.style.display === 'none' || extra.style.display === '') {
-      extra.style.display = 'block';
-      if (btn) btn.innerHTML = 'Read Less <i class="fas fa-arrow-up"></i>';
-    } else {
-      extra.style.display = 'none';
-      if (btn) btn.innerHTML = 'Read More <i class="fas fa-arrow-right"></i>';
+      startSlideTimer();
     }
-  }
 
+    // ─── 5. READ MORE TOGGLES ──────────────────────────────────────────────
+    window.toggleReadMore5 = function(e) {
+      e.preventDefault();
+      const extra = document.getElementById('approach');
+      const btn = document.getElementById('bttnapproach');
+      if (!extra) return;
+      
+      const isExpanded = extra.classList.toggle('expanded');
+      if (btn) {
+        btn.innerHTML = isExpanded ? 'Read Less <i class="fas fa-arrow-up"></i>' : 'Read More <i class="fas fa-arrow-right"></i>';
+      }
+      
+      // Fallback for old style if no CSS class
+      if (!extra.classList.contains('expanded')) {
+          // Check if we should still use display if CSS is missing
+          if (getComputedStyle(extra).maxHeight === 'none') {
+             extra.style.display = extra.style.display === 'none' ? 'block' : 'none';
+          }
+      }
+    };
 
+    window.toggleReadMore1 = function(event) {
+      event.preventDefault();
+      const ATcontent = document.getElementById('AT');
+      const bttnAT = document.getElementById('bttnAT');
+      if (!ATcontent || !bttnAT) return;
 
+      ATcontent.classList.toggle('expanded');
+      bttnAT.textContent = ATcontent.classList.contains('expanded') ? 'Read Less' : 'Read More';
+    };
 
+    window.toggleReadMore2 = function(event) {
+      event.preventDefault();
+      const FNcontent = document.getElementById('FN');
+      const bttnFN = document.getElementById('bttnFN');
+      if (!FNcontent || !bttnFN) return;
 
-
-
-function toggleReadMore1(event){
-    event.preventDefault();
-    const ATcontent=document.getElementById('AT');
-    const bttnAT=document.getElementById('bttnAT');
-
-    ATcontent.classList.toggle('expanded');
-     if(ATcontent.classList.contains('expanded')){
-      bttnAT.textContent='Read Less ';
-     }
-     else{
-      bttnAT.innerHTML='Read More ';
-     }
-  }
-
-  function toggleReadMore2(event){
-    event.preventDefault();
-    const FNcontent=document.getElementById('FN');
-    const bttnFN=document.getElementById('bttnFN');
-
-    FNcontent.classList.toggle('expanded');
-    if(FNcontent.classList.contains('expanded')){
-      bttnFN.textContent='Read Less ';
-    } 
-    else{
-      bttnFN.innerHTML='Read More ';
-    }
-  }
+      FNcontent.classList.toggle('expanded');
+      bttnFN.textContent = FNcontent.classList.contains('expanded') ? 'Read Less' : 'Read More';
+    };
+  });
+})();
