@@ -36,12 +36,15 @@
       attribute float aAspectRatio; attribute float aSpeed; attribute vec4 aTextureCoords;
       varying vec4 vTextureCoords; varying vec2 vUv;
       uniform float uMaxZ; uniform float uZrange; uniform float uScrollY; uniform float uSpeedY;
+      uniform float uRotateY;
       vec4 qFromAxis(vec3 axis, float angle) { float h = angle * 0.5; return vec4(axis * sin(h), cos(h)); }
       void main() {
         vec3 scaledPos = position; scaledPos.y /= aAspectRatio;
         float zPos = aHeight + uScrollY; float minZ = uMaxZ - uZrange;
         zPos = mod(zPos - minZ, uZrange) + minZ;
-        float theta = aAngle + uSpeedY * 0.4 * aSpeed;
+        /* All images share the same speed factor (no aSpeed variation) so their
+           relative arrangement is preserved. uRotateY lets the user orbit horizontally. */
+        float theta = aAngle + uSpeedY * 0.4 + uRotateY;
         vec3 iPos = vec3(cos(theta) * aRadius, zPos, sin(theta) * aRadius);
         float angle = atan(iPos.x, iPos.z);
         vec4 rot = qFromAxis(vec3(0.0,1.0,0.0), angle);
@@ -78,6 +81,7 @@
         this.canvas = canvas; this.imagesData = imagesData; this.onProgress = onProgress;
         this.disposed = false; this.paused = false;
         this.scrollY = { speedTarget:0, speedCurrent:0, target:0, current:0, direction:1 };
+        this.rotateY = { target:0, current:0 }; /* horizontal orbit state */
         this.imageInfos = []; this.centerMesh = null; this.activeIndices = null;
         this.scene = new THREE.Scene(); this.scene.background = new THREE.Color(0xf7f4ef);
         this.camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 200);
@@ -90,9 +94,11 @@
       }
       async init() { await this._loadAtlas(this.imagesData); this._buildInstanced(); this._buildCenter(); this._render(); }
       async _loadAtlas(data) {
-        const CELL_W = 256, CELL_H = 320, cols = Math.ceil(Math.sqrt(data.length)), rows = Math.ceil(data.length/cols);
+        /* Larger cells = sharper images in the 3D view */
+        const CELL_W = 420, CELL_H = 525, cols = Math.ceil(Math.sqrt(data.length)), rows = Math.ceil(data.length/cols);
         const atlasW = cols * CELL_W, atlasH = rows * CELL_H, cvs = document.createElement('canvas');
         cvs.width = atlasW; cvs.height = atlasH; const ctx = cvs.getContext('2d');
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
         ctx.fillStyle = '#f7f4ef'; ctx.fillRect(0,0,atlasW,atlasH);
         const images = await Promise.all(data.map((imgObj, i) => new Promise(res => {
           const img = new Image(); img.onload = () => { this.onProgress((i+1)/data.length); res(img); };
@@ -109,13 +115,19 @@
           return { aspectRatio: ia, uvs: { xStart: (destX+ox)/atlasW, xEnd: (destX+ox+dw)/atlasW, yStart: 1-(destY+oy)/atlasH, yEnd: 1-(destY+oy+dh)/atlasH }, ...data[i] };
         });
         this.atlasTexture = new THREE.CanvasTexture(cvs);
+        /* High-quality texture filtering */
+        this.atlasTexture.generateMipmaps  = true;
+        this.atlasTexture.minFilter        = THREE.LinearMipmapLinearFilter;
+        this.atlasTexture.magFilter        = THREE.LinearFilter;
+        this.atlasTexture.anisotropy       = this.renderer.capabilities.getMaxAnisotropy();
+        this.atlasTexture.needsUpdate      = true;
       }
       _buildInstanced() {
         const geo = new THREE.BoxGeometry(1.5, 1.5, 0.075), COUNT = 600, RADIUS = 6, HEIGHT = 120;
         this.uZrange = HEIGHT; this.uMaxZ = HEIGHT/2; this.instanceCount = COUNT;
         this.instancedMaterial = new THREE.ShaderMaterial({
           vertexShader: VERT, fragmentShader: FRAG, transparent: true,
-          uniforms: { uAtlas:{value:this.atlasTexture}, uScrollY:{value:0}, uZrange:{value:HEIGHT}, uMaxZ:{value:HEIGHT/2}, uSpeedY:{value:0} }
+          uniforms: { uAtlas:{value:this.atlasTexture}, uScrollY:{value:0}, uZrange:{value:HEIGHT}, uMaxZ:{value:HEIGHT/2}, uSpeedY:{value:0}, uRotateY:{value:0} }
         });
         const mesh = new THREE.InstancedMesh(geo, this.instancedMaterial, COUNT);
         const aTC = new Float32Array(COUNT * 4), aAngles = new Float32Array(COUNT), aHeights = new Float32Array(COUNT), aRads = new Float32Array(COUNT), aAR = new Float32Array(COUNT), aSpeeds = new Float32Array(COUNT), aIdx = new Uint16Array(COUNT);
@@ -147,25 +159,61 @@
           this.camera.aspect = window.innerWidth / window.innerHeight; this.camera.updateProjectionMatrix();
           this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        /* ── WHEEL: vertical = move through vortex, horizontal = orbit around it ── */
         window.addEventListener('wheel', (e) => {
-          if(this.paused) return;
-          const delta = (e.deltaY * 0.01); this.scrollY.target += delta; this.scrollY.speedTarget += delta;
+          if (this.paused) return;
+          const dy = e.deltaY * 0.01;
+          const dx = e.deltaX * 0.008;
+          this.scrollY.target += dy;
+          this.scrollY.speedTarget = Math.max(-8, Math.min(8, this.scrollY.speedTarget + dy));
           this.scrollY.direction = Math.sign(e.deltaY) || 1;
+          this.rotateY.target += dx;
         }, { passive: true });
 
-        /* ── TOUCH SCROLL (mobile vortex spin) ── */
-        let _touchY = 0;
+        /* ── MOUSE DRAG: horizontal drag = orbit, vertical drag = scroll through vortex ── */
+        let _isDragging = false, _dragX = 0, _dragY = 0;
+        this.canvas.addEventListener('mousedown', (e) => {
+          _isDragging = true; _dragX = e.clientX; _dragY = e.clientY;
+          this.canvas.style.cursor = 'grabbing';
+        });
+        window.addEventListener('mouseup', () => {
+          _isDragging = false;
+          this.canvas.style.cursor = 'crosshair';
+        });
+        window.addEventListener('mousemove', (e) => {
+          if (!_isDragging || this.paused) return;
+          const dx = e.clientX - _dragX;
+          const dy = e.clientY - _dragY;
+          _dragX = e.clientX; _dragY = e.clientY;
+          this.rotateY.target  += dx * -0.006;
+          const vDelta = dy * -0.018;
+          this.scrollY.target  += vDelta;
+          this.scrollY.speedTarget = Math.max(-8, Math.min(8, this.scrollY.speedTarget + vDelta));
+          this.scrollY.direction   = Math.sign(-dy) || 1;
+        });
+
+        /* ── TOUCH: horizontal = orbit, vertical = scroll through vortex ── */
+        let _touchX = 0, _touchY = 0;
         this.canvas.addEventListener('touchstart', (e) => {
+          _touchX = e.touches[0].clientX;
           _touchY = e.touches[0].clientY;
         }, { passive: true });
         this.canvas.addEventListener('touchmove', (e) => {
           if (this.paused) return;
+          const dx = _touchX - e.touches[0].clientX;
           const dy = _touchY - e.touches[0].clientY;
+          _touchX = e.touches[0].clientX;
           _touchY = e.touches[0].clientY;
-          const delta = dy * 0.025;
-          this.scrollY.target += delta;
-          this.scrollY.speedTarget += delta;
-          this.scrollY.direction = Math.sign(dy) || 1;
+          /* Route dominant axis: bigger movement wins to avoid diagonal confusion */
+          if (Math.abs(dx) > Math.abs(dy)) {
+            this.rotateY.target += dx * 0.006;
+          } else {
+            const delta = dy * 0.025;
+            this.scrollY.target += delta;
+            this.scrollY.speedTarget = Math.max(-8, Math.min(8, this.scrollY.speedTarget + delta));
+            this.scrollY.direction = Math.sign(dy) || 1;
+          }
         }, { passive: true });
       }
       _lerp(a, b, t) { return a + (b - a) * t; }
@@ -174,18 +222,41 @@
         if (!this.paused) {
           this.scrollY.target += 0.004 * this.scrollY.direction;
           this.scrollY.current = this._lerp(this.scrollY.current, this.scrollY.target, 0.1);
+
+          // Decay speedTarget to 0 so rotation returns to rest after scrolling
+          this.scrollY.speedTarget  = this._lerp(this.scrollY.speedTarget, 0, 0.06);
           this.scrollY.speedCurrent = this._lerp(this.scrollY.speedCurrent, this.scrollY.speedTarget, 0.1);
+
+          // Lerp horizontal orbit
+          this.rotateY.current = this._lerp(this.rotateY.current, this.rotateY.target, 0.08);
+
+          // Keep scroll values bounded to prevent float precision loss after long sessions
+          // (shader uses mod() so shifting by exactly uZrange is visually invisible)
+          const WRAP = this.uZrange || 120;
+          if (Math.abs(this.scrollY.target) > WRAP * 40) {
+            const shift = Math.round(this.scrollY.target / WRAP) * WRAP;
+            this.scrollY.target  -= shift;
+            this.scrollY.current -= shift;
+          }
+          // Keep rotateY in [-2π*200, +2π*200] to prevent precision drift
+          const TWO_PI = Math.PI * 2;
+          if (Math.abs(this.rotateY.target) > TWO_PI * 200) {
+            const rShift = Math.round(this.rotateY.target / TWO_PI) * TWO_PI;
+            this.rotateY.target  -= rShift;
+            this.rotateY.current -= rShift;
+          }
         }
         if (this.instancedMaterial) {
-          this.instancedMaterial.uniforms.uScrollY.value = this.scrollY.current;
-          this.instancedMaterial.uniforms.uSpeedY.value = this.scrollY.speedCurrent;
+          this.instancedMaterial.uniforms.uScrollY.value  = this.scrollY.current;
+          this.instancedMaterial.uniforms.uSpeedY.value   = this.scrollY.speedCurrent;
+          this.instancedMaterial.uniforms.uRotateY.value  = this.rotateY.current;
         }
         const navbar = document.getElementById('navbar'); if(navbar) navbar.classList.toggle('shrink', Math.abs(this.scrollY.current) > 2);
         const pb = document.getElementById('progress-bar'); if(pb && this.uZrange) pb.style.width = ((Math.abs(this.scrollY.current) % this.uZrange) / this.uZrange * 100) + '%';
         if (this.centerMaterial && this.imageInfos.length > 0) {
           const validIndices = this.activeIndices || this.imageInfos.map((_, i) => i);
           if (validIndices.length > 0) {
-            const idx = validIndices[Math.abs(Math.floor(this.scrollY.speedTarget)) % validIndices.length];
+            const idx = validIndices[Math.abs(Math.floor(this.scrollY.current)) % validIndices.length];
             const uvs = this.imageInfos[idx].uvs;
             this.centerMaterial.uniforms.uTextureCoords.value.set(uvs.xStart, uvs.xEnd, uvs.yStart, uvs.yEnd);
             this.textureIndex = idx;
