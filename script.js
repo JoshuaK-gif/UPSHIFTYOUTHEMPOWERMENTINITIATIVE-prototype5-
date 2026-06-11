@@ -233,6 +233,170 @@
       FNcontent.classList.toggle('expanded');
       bttnFN.textContent = FNcontent.classList.contains('expanded') ? 'Read Less ←' : 'Read More →';
     };
+(function () {
+      'use strict';
+
+      var card = document.querySelector('.usyei-mission .usyei-mission__card');
+      if (!card) return;
+
+      // If IntersectionObserver not supported, show immediately
+      if (!('IntersectionObserver' in window)) {
+        card.classList.add('um-visible');
+        return;
+      }
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('um-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.12,
+          rootMargin: '0px 0px -48px 0px'
+        }
+      );
+
+      observer.observe(card);
+    })();
+  /* ── Easing helper (easeOutExpo) ──────────────────────── */
+  function easeOutExpo(t) {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  }
+
+  /* ── Format number with commas ────────────────────────── */
+  function formatNumber(n) {
+    return n.toLocaleString("en-US");
+  }
+
+  /* ── Count-up animation ───────────────────────────────── */
+  function animateCounter(el) {
+    const target   = parseInt(el.dataset.target, 10);
+    const suffix   = el.dataset.suffix || "";
+    const duration = 2000; // ms
+    const start    = performance.now();
+
+    // Respect reduced-motion preference
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = formatNumber(target) + suffix;
+      el.classList.add("count-done");
+      return;
+    }
+
+    function step(now) {
+      const elapsed  = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased    = easeOutExpo(progress);
+      const current  = Math.round(eased * target);
+
+      el.textContent = formatNumber(current) + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = formatNumber(target) + suffix;
+        // Pulse effect after counting finishes
+        el.classList.remove("count-done");
+        // Force reflow to re-trigger animation
+        void el.offsetWidth;
+        el.classList.add("count-done");
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  /* ── Scroll reveal + trigger counters ────────────────── */
+  function initReveal() {
+    const revealEls = document.querySelectorAll("[data-reveal]");
+    if (!revealEls.length) return;
+
+    const observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+
+          const el = entry.target;
+
+          // Staggered delay from attribute (CSS handles it, but we mark visible)
+          el.classList.add("is-visible");
+
+          // Trigger counter if this element contains a stat number
+          const counter = el.querySelector(".stat-number[data-target]");
+          if (counter && !counter.dataset.animated) {
+            counter.dataset.animated = "true";
+
+            // Delay counter start to align with card slide-in
+            const delay = parseInt(el.dataset.revealDelay || 0, 10);
+            setTimeout(function () {
+              animateCounter(counter);
+            }, delay + 300); // +300 so the card is fully visible first
+          }
+
+          observer.unobserve(el);
+        });
+      },
+      {
+        threshold: 0.15,        // trigger when 15 % of card is in view
+        rootMargin: "0px 0px -40px 0px"
+      }
+    );
+
+    revealEls.forEach(function (el) {
+      observer.observe(el);
+    });
+  }
+
+  /* ── Floating background shapes (subtle parallax on mouse) ── */
+  function initParallax() {
+    const section = document.querySelector(".impact-section");
+    const shapes  = document.querySelectorAll(".bg-shape");
+    if (!section || !shapes.length) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+
+    document.addEventListener("mousemove", function (e) {
+      const rect = section.getBoundingClientRect();
+      // Only when mouse is over the section
+      if (e.clientY < rect.top || e.clientY > rect.bottom) return;
+      targetX = (e.clientX / window.innerWidth  - 0.5) * 14;
+      targetY = (e.clientY / window.innerHeight - 0.5) * 10;
+    });
+
+    (function loop() {
+      // Lerp toward target
+      currentX += (targetX - currentX) * 0.04;
+      currentY += (targetY - currentY) * 0.04;
+
+      shapes.forEach(function (shape, i) {
+        const factor = 1 + i * 0.35;
+        shape.style.transform =
+          "translate(" + currentX * factor + "px, " + currentY * factor + "px)";
+      });
+
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ── Init on DOM ready ───────────────────────────────── */
+  function init() {
+    initReveal();
+    initParallax();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+;
+
 
     // ─── 6. CARD CAROUSEL (HELP SECTION) ──────────────────────────────────
     (function () {
